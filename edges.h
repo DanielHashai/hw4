@@ -15,6 +15,7 @@ char addVertex();
 void freeVertex(Vertex *current);
 void printVertex(Vertex *vertex);
 void printGraph();
+int getWeight(int from, int to);
 
 int numVertices;
 Vertex **vertices;

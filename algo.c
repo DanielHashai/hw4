@@ -26,6 +26,16 @@ void doDijkstra() {
 
     int **graph = allocateTwoDimenArrayOnHeapUsingMalloc(numVertices, numVertices);
 
+    for (int i = 0; i < numVertices; i++) {
+	Vertex *from = vertices[i];
+	for (int j = 0; j < numVertices; j++) {
+	    if (i == j) continue;
+	    Vertex *to = vertices[j];
+	    graph[i][j] = getWeight(from->value, to->value);
+    if (DEBUG_EN) printf("%s %d graph[%d][%d] %d\n", __FILE__, __LINE__, i, j, graph[i][j]);
+    	}
+    }
+
     dijkstra(graph, from);
 
     
@@ -34,9 +44,9 @@ void doDijkstra() {
 // A utility function to print the constructed distance array
 void printSolution(int dist[])
 {
-//    cout <<"Vertex \t Distance from Source" << endl;
-//    for (int i = 0; i < V; i++)
-//        cout  << i << " \t\t"<<dist[i]<< endl;
+    if (DEBUG_EN) printf("Vertex \t\t Distance from Source\n");
+    for (int i = 0; i < numVertices; i++)
+        if (DEBUG_EN) printf("%d \t\t %d\n", i, dist[i]);
 }
 
 void dijkstra(int **graph, int src)
@@ -82,7 +92,6 @@ void dijkstra(int **graph, int src)
 // the set of vertices not yet included in shortest path tree
 int minDistance(int dist[], bool sptSet[])
 {
-  
     // Initialize min value
     int min = MAX_WEIGHT, min_index;
 

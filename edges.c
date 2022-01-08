@@ -310,7 +310,6 @@ char addVertex() {
 }
 
 void deleteEdgeFromList(Vertex *vertex, int valueToRemove) {
-		    if (DEBUG_EN) printf("%s %d [createUserList] here vertex %d \n", __FILE__, __LINE__,vertex->value);
 
     if (vertex->edges == null) return;
 
@@ -324,6 +323,8 @@ void deleteEdgeFromList(Vertex *vertex, int valueToRemove) {
 	iterator = iterator->next;
     }
     if (!hasEdge) return;
+
+    vertex->edges->size--;
 
     if (vertex->edges->head->to->value == valueToRemove) {
 	if (DEBUG_EN && EXTRA_DEBUG_EN) printf("%s %d [deleteEdgeFromList] head value %d\n", __FILE__, __LINE__, valueToRemove);
@@ -386,4 +387,25 @@ void deleteVertex() {
 
     if (DEBUG_EN) printf("%s %d [deleteVertex] done numVertices(%d)\n", __FILE__, __LINE__, numVertices);
 
+}
+
+int getWeight(int from, int to) {
+
+    int ret = MAX_WEIGHT;
+
+    int fromId = getVertexId(from);
+    Vertex *fromVertex = vertices[fromId];
+
+    Edge *iterator = fromVertex->edges != null && fromVertex->edges->head != null ? fromVertex->edges->head : null;
+    while (iterator != null) {
+	if (iterator->to->value == to) {
+	    ret = iterator->weight;
+	    break;
+	}
+	iterator = iterator->next;
+    }
+
+    if (DEBUG_EN) printf("%s %d [getWeight] from(%d) to(%d) weight(%d)\n", __FILE__, __LINE__, from, to, ret);
+
+    return ret;
 }
