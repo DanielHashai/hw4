@@ -6,6 +6,7 @@
 #define MAX_STR 1000
 #define DECIMAL_CHAR_VAL_0 48
 #define DECIMAL_CHAR_VAL_9 57
+#define CHAR_SUCCESS ((char)255)
 typedef enum {false, true} bool;
 
 char getChar();

@@ -1,7 +1,7 @@
 #include "edges.h"
 
-bool listIsNull() {
-	return ((list == null) ? true : false);
+bool graphIsNull() {
+	return ((numVertices == 0) ? true : false);
 }
 
 void visit(Vertex *vertex) {
@@ -13,10 +13,10 @@ bool isVisited(Vertex *vertex) {
 	return vertex->visited;
 }
 
-void printList(Vertex *vertices[], int size, int from) {
+void printList(Vertex *in[], int size, int from) {
 	Vertex *toVisit[size], *current;
 	int top = -1;
-	toVisit[++top] = vertices[from];
+	toVisit[++top] = in[from];
 	while((current = toVisit[top--])) {
 		if(isVisited(current) == false) {
 			visit(current);
@@ -30,37 +30,33 @@ void printList(Vertex *vertices[], int size, int from) {
 	}
 }
 
-void printEdge(Edge edge) {
-	if (!DEBUG_EN) return;
-	char str[MAX_STR];
-	str[MAX_STR-1] = '\0';
-	char *nextExists = edge.next == null ? "false" : "true";
-	int totalRead = sscanf(str, "\tto(%d) weight(%d) nextExists(%s)", &edge.to->value, &edge.weight, nextExists);
-	
+void printEdge(Edge *edge) {
+
 	if (DEBUG_EN) {
-		printf("%s %d totalRead(%d) %s\n",  __FILE__, __LINE__, totalRead, str);
+		printf("%s %d [edge]to(%d) weight(%d) nextExists(%s)\n",  __FILE__, __LINE__, edge->to->value, edge->weight, edge->next == null ? "false" : "true");
 	}
+
 }
 
-void printVertex(Vertex vertex) {
+void printVertex(Vertex *vertex) {
 
 	if (!DEBUG_EN) return;
 
 	char trueStr[MAX_STR] = "true";
 	char falseStr[MAX_STR] = "false";
 
-	char str[MAX_STR];
-	str[MAX_STR-1] = '\0';
-	int totalRead = sscanf(str, "value(%d) smallestWeight(%d) visited(%s)", &vertex.value, &vertex.smallestWeight,vertex.visited ? trueStr : falseStr );
-
 	if (DEBUG_EN) {
-		printf("%s %d totalRead(%d) %s\n", __FILE__, __LINE__, totalRead, str);
+		printf("%s %d [vertex] value(%d) smallestWeight(%d) visited(%s) numConnections(%d)\n", __FILE__, __LINE__, vertex->value, vertex->smallestWeight,vertex->visited ? trueStr : falseStr, vertex->edges->size);
 	}
 
-	Edge *edge = vertex.edges->head;
+	Edge *edge = (vertex->edges != null) ? vertex->edges->head : null;
 	while (edge != null) {
-		printEdge(*edge);
+		printEdge(edge);
 		edge = edge->next;
+	}
+
+	if (DEBUG_EN) {
+		printf("----------------------------------------------\n");
 	}
 }
 
@@ -82,15 +78,15 @@ Vertex *createVertex(int value) {
 	return vertex;
 }
 
-LinkedList *createLinkedList(int size) {
+LinkedList *createLinkedList() {
 	LinkedList *list = (LinkedList *) malloc(sizeof(LinkedList));
 	list->head = null;
 	list->tail = null;
-	list->size = size;
+	list->size = 0;
 	return list;
 }
 
-void insertIntoList(Edge *edge) {
+void insertIntoList(LinkedList *list, Edge *edge) {
 	if(list->head == null) {
 		list->head = edge;
 		list->tail = edge;
@@ -98,6 +94,7 @@ void insertIntoList(Edge *edge) {
 		list->tail->next = edge;
 		list->tail = edge;
 	}
+	list->size++;
 }
 
 // input - CMD NUM_EDGES n EDGE_VALUE TO WEIGHT TO WEIGHT ... n EDGE_VALUE ..
@@ -108,13 +105,11 @@ char createUserList() {
 
 	scanf("%d", &size);
 	dummy = getChar();
+	numVertices = size;
 
-
-	list = createLinkedList(size);
-	list->size = size;
 	vertices = (Vertex **) malloc(sizeof(Vertex*) * size);
 
-	for (int i = 0; i < size; i ++) {
+	for (int i = 0; i < size; i++) {
 		int value;
 		char weight;
 
@@ -124,31 +119,33 @@ char createUserList() {
 		if (DEBUG_EN) printf("%s %d size(%d) dummy(%c) vertice_i(%d) value(%d)\n", __FILE__, __LINE__, size, dummy, i, value);
 
 		weight = getChar();
+		LinkedList *list = createLinkedList();
 
 		while (isInt(weight)) {
-			insertIntoList(createEdge(atoi(&weight), vertices[i]));
+			insertIntoList(list, createEdge(atoi(&weight), vertices[i]));
 			weight = getChar();
 		}
+		vertices[i]->edges = list;
 
 		if (weight == DIVIDER) {
-			printVertex(*vertices[i]);
+			printVertex(vertices[i]);
 			continue;
 		} else {
-			printVertex(*vertices[i]);
+			printVertex(vertices[i]);
 			return weight;
 		}
 
 	}
 
-	return 255; // dummy success return value
+	return CHAR_SUCCESS; // dummy success return value
 
 }
 
-void deleteList() {
-	for (int i = 0; i < list->size; i++) {
-		deleteEdge(vertices[i]->edges->head);
-		free(vertices[i]);
+void deleteGraph() {
+	for (int i = 0; i < numVertices; i++) {
+	    deleteVertex(vertices[i]);
 	}
+	numVertices = 0;
 }
 
 void deleteEdge(Edge *current) {
@@ -159,5 +156,70 @@ void deleteEdge(Edge *current) {
 
 	deleteEdge(next);
 	free(current);
+
+}
+
+void deleteVertex(Vertex *current) {
+
+	if (current == null) return;
+
+	if (current->edges != null) {
+	    deleteEdge(current->edges->head);
+	}
+	free(current);
+
+}
+
+char addVertex() {
+
+    int value;
+    char weight;
+    bool vertexExists = false;
+
+    scanf("%d", &value);
+    Vertex *newVertex = createVertex(value);
+
+    weight = getChar();
+    LinkedList *list = createLinkedList();
+
+    while (isInt(weight)) {
+    	insertIntoList(list, createEdge(atoi(&weight), newVertex));
+    	weight = getChar();
+    }
+    newVertex->edges = list;
+
+    if (numVertices == 0) { // shouldn't happen and will happen if input isn't valid
+	return '\0';
+    }
+
+    for (int i = 0; i < numVertices; i ++) {
+	if (vertices[i]->value != value) continue; // continue loop until value matches a vertex value that we already have
+	vertexExists = true;
+	break;
+    }
+
+    // if vertex doesn't exist size of graph will increment by one, otherwise vertex exists and just need to update
+    int oldSize = numVertices;
+    int newSize = (vertexExists) ? oldSize : oldSize + 1;
+    numVertices = newSize;
+
+    Vertex **newVertices = (Vertex **) malloc(sizeof(Vertex*) * newSize);
+    for (int i = 0; i < oldSize; i++) {
+	if (vertices[i]->value != value) {
+	    // copy vertex to new vertex array
+	    newVertices[i] = vertices[i];
+	    continue;
+	} else {
+	    // value exists and therefore need to delete and then update in array
+	    deleteVertex(vertices[i]);
+	    newVertices[i] = newVertex;
+	}
+    }
+
+    if (!vertexExists) { // if vertex isn't in list, then previous for loop didn't insert the new vertex, therefore add to last index in array 
+	newVertices[newSize-1] = newVertex;
+    }
+
+    return weight;
 
 }

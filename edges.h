@@ -4,14 +4,16 @@
 
 Edge *createEdge(int weight, Vertex *to);
 Vertex *createVertex(int value);
-LinkedList *createLinkedList(int size);
-void insertIntoList(Edge *edge);
-void deleteList();
+LinkedList *createLinkedList();
+void insertIntoList(LinkedList *list, Edge *edge);
+void deleteGraph();
 char createUserList();
 void deleteEdge(Edge *current);
-bool listIsNull();
+bool graphIsNull();
+char addVertex();
+void deleteVertex(Vertex *current);
 
+int numVertices;
 Vertex **vertices;
-LinkedList *list;
 
 #define DIVIDER 'n'
