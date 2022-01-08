@@ -122,6 +122,8 @@ int getFreeVertexId() {
 // input - CMD NUM_EDGES n EDGE_VALUE TO WEIGHT TO WEIGHT ... n EDGE_VALUE ..
 char createUserList() {
 
+	if (DEBUG_EN) printf("%s %d [createUserList] start\n", __FILE__, __LINE__);
+
 	int size = getInt();
 	char dummy = getChar();
 
@@ -144,12 +146,18 @@ char createUserList() {
 		int i = vertexId != -1 ? vertexId : getFreeVertexId();
 		vertices[i]->value = value;
 
-		if (DEBUG_EN) printf("%s %d size(%d) dummy(%c) vertice_i(%d) value(%d)\n", __FILE__, __LINE__, size, dummy, i, value);
+		if (DEBUG_EN) printf("%s %d [createUserList] size(%d) dummy(%c) vertice_i(%d) value(%d) vertexCnt(%d)\n", __FILE__, __LINE__, size, dummy, i, value,vertexCnt);
 
 		char toValue = getChar();
 
-		if (toValue == DIVIDER) continue;
-		if (!isInt(toValue)) return toValue;
+		if (toValue == DIVIDER) {
+		    printVertex(vertices[i]);
+		    continue;
+		}
+		if (!isInt(toValue)) {
+		    if (DEBUG_EN) printf("%s %d [createUserList] done \n", __FILE__, __LINE__);
+		    return toValue;
+		}
 
 		LinkedList *list = createLinkedList();
 
@@ -212,6 +220,8 @@ void deleteVertex(Vertex *current) {
 
 char addVertex() {
 
+    if (DEBUG_EN) printf("%s %d [addVertex] start\n", __FILE__, __LINE__);
+
     bool vertexExists = false;
 
     char value = getChar();
@@ -225,7 +235,6 @@ char addVertex() {
     while (isInt(toValue)) {
 	int weight = getInt();
 	int toVertexId = getVertexId(atoi(&toValue));
-    printf("\ntovalue %c %d toVertex%d\n", toValue, atoi(&toValue),toVertexId);	
 	Vertex *toVertex = vertices[toVertexId];
     	insertIntoList(list, createEdge(weight, toVertex));
 	toValue = getChar();
@@ -272,6 +281,7 @@ char addVertex() {
     vertices = newVertices;
     if (DEBUG_EN) printf("%s %d [addVertex] add vertex(%d) numVertices(%d) vertexExists(%d)\n", __FILE__, __LINE__, atoi(&value), numVertices, vertexExists);
 
+    if (DEBUG_EN) printf("%s %d [addVertex] done\n", __FILE__, __LINE__);
     return toValue;
 
 }

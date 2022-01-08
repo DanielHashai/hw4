@@ -16,13 +16,15 @@ char doB() {
 
 
 char doS() {
-    return addVertex();
+    return '0';
 }
 
-
+char doD() {
+    return '0';
+}
 
 char doT() {
-    return addVertex();
+    return '0';
 }
 
 int main() {
@@ -46,10 +48,14 @@ int main() {
 				doS();
 			    } else if (result == 'T') {
 				doT();
+			    } else if (result == 'A') {
+				doA();
+			    } else if (result == 'D') {
+				doD();
 			    }
-				break;
+			    break;
 			case 'B':
-			    result = addVertex();
+			    result = doB();
 			    if ((result == '\0') || (result == EOF) || (result == CHAR_SUCCESS)) {
 				return 0;
 			    } else if (result == 'B') {
@@ -58,11 +64,59 @@ int main() {
 				doS();
 			    } else if (result == 'T') {
 				doT();
+			    } else if (result == 'A') {
+				doA();
+			    } else if (result == 'D') {
+				doD();
 			    }
 			    break;
 			case 'S':
+			    result = doS();
+			    if ((result == '\0') || (result == EOF) || (result == CHAR_SUCCESS)) {
+				return 0;
+			    } else if (result == 'B') {
+				doB();
+			    } else if (result == 'S') {
+				doS();
+			    } else if (result == 'T') {
+				doT();
+			    } else if (result == 'A') {
+				doA();
+			    } else if (result == 'D') {
+				doD();
+			    }
+			    break;
+			case 'D':
+			    result = doD();
+			    if ((result == '\0') || (result == EOF) || (result == CHAR_SUCCESS)) {
+				return 0;
+			    } else if (result == 'B') {
+				doB();
+			    } else if (result == 'S') {
+				doS();
+			    } else if (result == 'T') {
+				doT();
+			    } else if (result == 'A') {
+				doA();
+			    } else if (result == 'D') {
+				doD();
+			    }
 			    break;
 			case 'T':
+			    result = doT();
+			    if ((result == '\0') || (result == EOF) || (result == CHAR_SUCCESS)) {
+				return 0;
+			    } else if (result == 'B') {
+				doB();
+			    } else if (result == 'S') {
+				doS();
+			    } else if (result == 'T') {
+				doT();
+			    } else if (result == 'A') {
+				doA();
+			    } else if (result == 'D') {
+				doD();
+			    }
 			    break;
 			default:
 			    break;
