@@ -30,10 +30,21 @@ void printList(Vertex *in[], int size, int from) {
 	}
 }
 
+void printGraph() {
+
+	if (DEBUG_EN) {
+	    for (int i = 0; i < numVertices; i++) {
+		printf("%s %d [GRAPH] i(%d)\n", __FILE__, __LINE__, i);
+		printVertex(vertices[i]);
+	    }
+	}
+
+}
+
 void printEdge(Edge *edge) {
 
 	if (DEBUG_EN) {
-		printf("%s %d [edge] to(%d) weight(%d) nextExists(%s)\n",  __FILE__, __LINE__, edge->to->value, edge->weight, edge->next == null ? "false" : "true");
+		printf("%s %d [EDGE] to(%d) weight(%d) nextExists(%s)\n",  __FILE__, __LINE__, edge->to->value, edge->weight, edge->next == null ? "false" : "true");
 	}
 
 }
@@ -46,7 +57,7 @@ void printVertex(Vertex *vertex) {
 	char falseStr[MAX_STR] = "false";
 
 	if (DEBUG_EN) {
-		printf("%s %d [vertex] value(%d) smallestWeight(%d) visited(%s) numConnections(%d)\n", __FILE__, __LINE__, vertex->value, vertex->smallestWeight,vertex->visited ? trueStr : falseStr, vertex->edges->size);
+		printf("%s %d [VERTEX] value(%d) smallestWeight(%d) visited(%s) numConnections(%d)\n", __FILE__, __LINE__, vertex->value, vertex->smallestWeight,vertex->visited ? trueStr : falseStr, vertex->edges != null ? vertex->edges->size : 0);
 	}
 
 	Edge *edge = (vertex->edges != null) ? vertex->edges->head : null;
@@ -104,7 +115,7 @@ int getVertexId(int value) {
 	ret = i;
 	break;
     }
-    if (DEBUG_EN) printf("%s %d [getVertexId] value(%d) id(%d)\n", __FILE__, __LINE__, value, ret);
+    if (DEBUG_EN && EXTRA_DEBUG_EN) printf("%s %d [getVertexId] value(%d) id(%d)\n", __FILE__, __LINE__, value, ret);
     return ret;
 }
 
@@ -115,7 +126,7 @@ int getFreeVertexId() {
 	ret = i;
 	break;
     }
-    if (DEBUG_EN) printf("%s %d [getFreeVertexId] id(%d)\n", __FILE__, __LINE__, ret);
+    if (DEBUG_EN && EXTRA_DEBUG_EN) printf("%s %d [getFreeVertexId] id(%d)\n", __FILE__, __LINE__, ret);
     return ret;
 }
 
@@ -146,12 +157,12 @@ char createUserList() {
 		int i = vertexId != -1 ? vertexId : getFreeVertexId();
 		vertices[i]->value = value;
 
-		if (DEBUG_EN) printf("%s %d [createUserList] size(%d) dummy(%c) vertice_i(%d) value(%d) vertexCnt(%d)\n", __FILE__, __LINE__, size, dummy, i, value,vertexCnt);
+		if (DEBUG_EN && EXTRA_DEBUG_EN) printf("%s %d [createUserList] size(%d) dummy(%c) vertice_i(%d) value(%d) vertexCnt(%d)\n", __FILE__, __LINE__, size, dummy, i, value,vertexCnt);
 
 		char toValue = getChar();
 
 		if (toValue == DIVIDER) {
-		    printVertex(vertices[i]);
+		    if (EXTRA_DEBUG_EN) printVertex(vertices[i]);
 		    continue;
 		}
 		if (!isInt(toValue)) {
@@ -177,10 +188,10 @@ char createUserList() {
 		vertices[i]->edges = list;
 
 		if (toValue == DIVIDER) {
-			printVertex(vertices[i]);
+			if (EXTRA_DEBUG_EN) printVertex(vertices[i]);
 			continue;
 		} else {
-			printVertex(vertices[i]);
+			if (EXTRA_DEBUG_EN) printVertex(vertices[i]);
 			return toValue;
 		}
 
@@ -279,7 +290,7 @@ char addVertex() {
 
     free(vertices); // free older pointer of vertices
     vertices = newVertices;
-    if (DEBUG_EN) printf("%s %d [addVertex] add vertex(%d) numVertices(%d) vertexExists(%d)\n", __FILE__, __LINE__, atoi(&value), numVertices, vertexExists);
+    if (DEBUG_EN && EXTRA_DEBUG_EN) printf("%s %d [addVertex] add vertex(%d) numVertices(%d) vertexExists(%d)\n", __FILE__, __LINE__, atoi(&value), numVertices, vertexExists);
 
     if (DEBUG_EN) printf("%s %d [addVertex] done\n", __FILE__, __LINE__);
     return toValue;

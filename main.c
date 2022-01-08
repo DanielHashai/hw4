@@ -40,6 +40,7 @@ int main() {
 		switch (cmd) {
 			case 'A':
 			    result = doA();
+			    printGraph();
 			    if ((result == '\0') || (result == EOF) || (result == CHAR_SUCCESS)) {
 				return 0;
 			    } else if (result == 'B') {
@@ -56,6 +57,7 @@ int main() {
 			    break;
 			case 'B':
 			    result = doB();
+			    printGraph();
 			    if ((result == '\0') || (result == EOF) || (result == CHAR_SUCCESS)) {
 				return 0;
 			    } else if (result == 'B') {
