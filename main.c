@@ -24,6 +24,7 @@ char doB() {
 
 
 char doS() {
+    doDijkstra();
     return getCharOnly();
 }
 

@@ -13,10 +13,10 @@ bool isVisited(Vertex *vertex) {
 	return vertex->visited;
 }
 
-void printList(Vertex *in[], int size, int from) {
-	Vertex *toVisit[size], *current;
+void visitList(int from) {
+	Vertex *toVisit[numVertices], *current;
 	int top = -1;
-	toVisit[++top] = in[from];
+	toVisit[++top] = vertices[from];
 	while((current = toVisit[top--])) {
 		if(isVisited(current) == false) {
 			visit(current);
@@ -387,4 +387,5 @@ void deleteVertex() {
     free(verticesToRemove);
 
     if (DEBUG_EN) printf("%s %d [deleteVertex] done numVertices(%d)\n", __FILE__, __LINE__, numVertices);
+
 }

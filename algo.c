@@ -1,8 +1,21 @@
 #include "algo.h"
 
-void dijkstra(Vertex *vertices[], int size, int from) {
-	printf("\n\nDijkstra-ing\n");
-	Vertex *toVisit[size], *current;
+void doDijkstra() {
+
+    int from = getInt();
+    int to = getInt();
+
+    dijkstra(from);
+
+    printGraph();
+    
+}
+
+void dijkstra(int from) {
+
+	if (DEBUG_EN) printf("%s %d [dijkstra] start from(%d)\n", __FILE__, __LINE__, from);
+
+	Vertex *toVisit[numVertices], *current;
 	int top = -1;
 	toVisit[++top] = vertices[from];
 
@@ -23,4 +36,6 @@ void dijkstra(Vertex *vertices[], int size, int from) {
 		}
 		if(top == -1) break;
 	}
+
+	if (DEBUG_EN) printf("%s %d [dijkstra] start\n", __FILE__, __LINE__);
 }

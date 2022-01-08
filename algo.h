@@ -1,4 +1,6 @@
 #include <stdio.h>
 #include "nodes.h"
+#include "edges.h"
 
-void dijkstra(Vertex *vertices[], int size, int from);
+void dijkstra(int from);
+void doDijkstra();
