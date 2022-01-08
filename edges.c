@@ -35,7 +35,7 @@ void printGraph() {
 	if (DEBUG_EN) {
 	    printf("%s %d [GRAPH] numVertices(%d)\n", __FILE__, __LINE__, numVertices);
 	    for (int i = 0; i < numVertices; i++) {
-		printf("%s %d [GRAPH] i(%d)\n", __FILE__, __LINE__, i);
+		printf("%s %d [GRAPH] id(%d)\n", __FILE__, __LINE__, i);
 		printVertex(vertices[i]);
 	    }
 	}
@@ -158,7 +158,7 @@ char createUserList() {
 		int i = vertexId != -1 ? vertexId : getFreeVertexId();
 		vertices[i]->value = value;
 
-		if (DEBUG_EN && EXTRA_DEBUG_EN) printf("%s %d [createUserList] size(%d) dummy(%c) vertice_i(%d) value(%d) vertexCnt(%d)\n", __FILE__, __LINE__, size, dummy, i, value,vertexCnt);
+		if (DEBUG_EN && EXTRA_DEBUG_EN) printf("%s %d [createUserList] size(%d) dummy(%c) vertice_id(%d) value(%d) vertexCnt(%d)\n", __FILE__, __LINE__, size, dummy, i, value,vertexCnt);
 
 		char toValue = getChar();
 
@@ -226,7 +226,7 @@ void freeVertex(Vertex *current) {
 	if (current->edges != null) {
 	    freeEdge(current->edges->head);
 	}
-	free(current);
+	//free(current); TODO for some reason this screws me over, i thought i need to free here...
 
 }
 
@@ -271,6 +271,7 @@ char addVertex() {
     numVertices = newSize;
 
     Vertex **newVertices = (Vertex **) malloc(sizeof(Vertex*) * newSize);
+    Vertex **verticesToRemove = vertices;
 
     for (int i = 0; i < oldSize; i++) {
 
@@ -281,11 +282,12 @@ char addVertex() {
 	} 
 	
 	// value exists and therefore need to delete and then update in array
-	if (DEBUG_EN) printf("%s %d [addVertex] delete vertex(%d) at i(%d)\n", __FILE__, __LINE__, atoi(&value), i);
+	if (DEBUG_EN) printf("%s %d [addVertex] DELETE vertex(%d) at id(%d)\n", __FILE__, __LINE__, atoi(&value), i);
 	printVertex(vertices[i]);
-
-	freeVertex(vertices[i]);
+    
+	Vertex *vertexToRemove = vertices[i];
 	newVertices[i] = newVertex;
+	freeVertex(vertexToRemove);
 
     }
 
@@ -293,9 +295,9 @@ char addVertex() {
 	newVertices[newSize-1] = newVertex;
     }
 
-    free(vertices); // free older pointer of vertices
     vertices = newVertices;
-    if (DEBUG_EN && EXTRA_DEBUG_EN) printf("%s %d [addVertex] add vertex(%d) numVertices(%d) vertexExists(%d)\n", __FILE__, __LINE__, atoi(&value), numVertices, vertexExists);
+    free(verticesToRemove); // free older pointer of vertices
+    if (DEBUG_EN) printf("%s %d [addVertex] ADD vertex(%d) numVertices(%d) vertexExists(%d)\n", __FILE__, __LINE__, atoi(&value), numVertices, vertexExists);
 
     if (DEBUG_EN) printf("%s %d [addVertex] done ret(%c)\n", __FILE__, __LINE__, toValue);
     return toValue;
@@ -303,8 +305,9 @@ char addVertex() {
 }
 
 void deleteEdgeFromList(Vertex *vertex, int valueToRemove) {
-
+printGraph();
     if (vertex->edges->head->to->value == valueToRemove) {
+	if (DEBUG_EN) printf("%s %d [deleteEdgeFromList] at head value %d\n", __FILE__, __LINE__, valueToRemove);
 	Edge *edgeToRemove = vertex->edges->head;
 	vertex->edges->head = vertex->edges->head->next;
 	free(edgeToRemove);
@@ -314,6 +317,7 @@ void deleteEdgeFromList(Vertex *vertex, int valueToRemove) {
     Edge *iterator = vertex->edges->head->next;
     Edge *previous = vertex->edges->head;
     while (iterator != null) {
+	if (DEBUG_EN) printf("%s %d [deleteEdgeFromList] valueToRemove(%d) iterator_value(%d)\n", __FILE__, __LINE__, valueToRemove, iterator->to->value);
 	if (iterator->to->value == valueToRemove) {
 	    Edge *edgeToRemove = iterator;
 	    previous->next = iterator->next;

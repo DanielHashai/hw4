@@ -8,13 +8,17 @@ char doA() {
 	freeGraph();
     }
     char ret = createUserList();
+    if (DEBUG_EN) printf("AAAAAAAAAAAAAAAAAAAAAAAAAaAAAAAAAAAAA ---->\n");
     printGraph();
+    if (DEBUG_EN) printf("<---- AAAAAAAAAAAAAAAAAAAAAAAAAaAAAAAAAAAAA\n");
     return ret;
 }
 
 char doB() {
     char ret = addVertex();
+    if (DEBUG_EN) printf("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB ---->\n");
     printGraph();
+    if (DEBUG_EN) printf("<---- BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\n");
     return ret;
 }
 
@@ -25,7 +29,9 @@ char doS() {
 
 char doD() {
     deleteVertex();
+    if (DEBUG_EN) printf("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD ---->\n");
     printGraph();
+    if (DEBUG_EN) printf("<---- DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\n");
     return getCharOnly();
 }
 
