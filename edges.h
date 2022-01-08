@@ -14,7 +14,6 @@ char addVertex();
 void deleteVertex(Vertex *current);
 void printVertex(Vertex *vertex);
 void printGraph();
-void printGraph();
 
 int numVertices;
 Vertex **vertices;

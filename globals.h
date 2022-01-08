@@ -11,5 +11,7 @@
 typedef enum {false, true} bool;
 
 char getChar();
+char getCharOnly();
 int getInt();
 bool isInt(char c);
+bool isTerminate(char c);

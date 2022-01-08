@@ -16,114 +16,56 @@ char doB() {
 
 
 char doS() {
-    return '0';
+    return getCharOnly();
 }
 
 char doD() {
-    return '0';
+    return getCharOnly();
 }
 
 char doT() {
-    return '0';
+    return getCharOnly();
 }
 
 int main() {
 
-	while (true) {
+	char cmd = getChar();
+	while (cmd != 'A') {
+	    cmd = getChar();
+	}
+	cmd = doA();
+	printGraph();
 
-		char cmd = getChar();
-		char result = '\0';
+	if (isTerminate(cmd)) return 0;
+
+	while (!isTerminate(cmd)) {
 
 		if (DEBUG_EN) printf("%s %d [main] cmd(%c)\n", __FILE__, __LINE__, cmd);
-		if (cmd == '\0') return 0;
 
 		switch (cmd) {
 			case 'A':
-			    result = doA();
+			    cmd = doA();
 			    printGraph();
-			    if ((result == '\0') || (result == EOF) || (result == CHAR_SUCCESS)) {
-				return 0;
-			    } else if (result == 'B') {
-				doB();
-			    } else if (result == 'S') {
-				doS();
-			    } else if (result == 'T') {
-				doT();
-			    } else if (result == 'A') {
-				doA();
-			    } else if (result == 'D') {
-				doD();
-			    }
 			    break;
 			case 'B':
-			    result = doB();
+			    cmd = doB();
 			    printGraph();
-			    if ((result == '\0') || (result == EOF) || (result == CHAR_SUCCESS)) {
-				return 0;
-			    } else if (result == 'B') {
-				doB();
-			    } else if (result == 'S') {
-				doS();
-			    } else if (result == 'T') {
-				doT();
-			    } else if (result == 'A') {
-				doA();
-			    } else if (result == 'D') {
-				doD();
-			    }
 			    break;
 			case 'S':
-			    result = doS();
-			    if ((result == '\0') || (result == EOF) || (result == CHAR_SUCCESS)) {
-				return 0;
-			    } else if (result == 'B') {
-				doB();
-			    } else if (result == 'S') {
-				doS();
-			    } else if (result == 'T') {
-				doT();
-			    } else if (result == 'A') {
-				doA();
-			    } else if (result == 'D') {
-				doD();
-			    }
+			    cmd = doS();
 			    break;
 			case 'D':
-			    result = doD();
-			    if ((result == '\0') || (result == EOF) || (result == CHAR_SUCCESS)) {
-				return 0;
-			    } else if (result == 'B') {
-				doB();
-			    } else if (result == 'S') {
-				doS();
-			    } else if (result == 'T') {
-				doT();
-			    } else if (result == 'A') {
-				doA();
-			    } else if (result == 'D') {
-				doD();
-			    }
+			    cmd = doD();
 			    break;
 			case 'T':
-			    result = doT();
-			    if ((result == '\0') || (result == EOF) || (result == CHAR_SUCCESS)) {
-				return 0;
-			    } else if (result == 'B') {
-				doB();
-			    } else if (result == 'S') {
-				doS();
-			    } else if (result == 'T') {
-				doT();
-			    } else if (result == 'A') {
-				doA();
-			    } else if (result == 'D') {
-				doD();
-			    }
+			    cmd = doT();
 			    break;
 			default:
 			    break;
 		}
 	}
+
+	deleteGraph();
 
 	return 0;
 }

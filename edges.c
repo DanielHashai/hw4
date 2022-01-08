@@ -33,6 +33,7 @@ void printList(Vertex *in[], int size, int from) {
 void printGraph() {
 
 	if (DEBUG_EN) {
+	    printf("%s %d [GRAPH] numVertices(%d)\n", __FILE__, __LINE__, numVertices);
 	    for (int i = 0; i < numVertices; i++) {
 		printf("%s %d [GRAPH] i(%d)\n", __FILE__, __LINE__, i);
 		printVertex(vertices[i]);
@@ -292,7 +293,7 @@ char addVertex() {
     vertices = newVertices;
     if (DEBUG_EN && EXTRA_DEBUG_EN) printf("%s %d [addVertex] add vertex(%d) numVertices(%d) vertexExists(%d)\n", __FILE__, __LINE__, atoi(&value), numVertices, vertexExists);
 
-    if (DEBUG_EN) printf("%s %d [addVertex] done\n", __FILE__, __LINE__);
+    if (DEBUG_EN) printf("%s %d [addVertex] done ret(%c)\n", __FILE__, __LINE__, toValue);
     return toValue;
 
 }
