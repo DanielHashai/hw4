@@ -1,10 +1,10 @@
 #ifndef NODES_H_
 #define NODES_H_
 
-#define MAX_WEIGHT 9999999
-#define null NULL
+#include "globals.h"
 
-typedef enum {false, true} bool;
+#define MAX_WEIGHT 9999999
+
 typedef struct _Edge Edge;
 typedef struct _Vertex Vertex;
 typedef struct _LinkedList LinkedList;
@@ -19,6 +19,7 @@ struct _Vertex {
 	int value;
 	LinkedList *edges;
 	int smallestWeight;
+	bool visited;
 };
 
 struct _LinkedList {
@@ -26,7 +27,5 @@ struct _LinkedList {
 	Edge *tail;
 	int size;
 };
-
-# define DEBUG() printf("%s %d", __FILE__, __LINE__);
 
 #endif

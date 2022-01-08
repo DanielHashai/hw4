@@ -4,16 +4,25 @@
 #include "edges.h"
 
 int main() {
+
 	while (true) {
-		char cmd;
-		scanf("%c", &cmd);
+
+		char cmd = getChar();
+
+		if (cmd == '\0') return 0;
 
 		switch (cmd) {
 			case 'A':
-				if (listIsNull()) {
-				/	deleteList();
-			//	
-				//createUserList();
+				if (!listIsNull()) {
+					deleteList();
+				}
+				char result = createUserList();
+				if ((result == '\0') || (result == EOF) || (result == 255)) {
+					return 0;
+				} else if (result == 'B') {
+				} else if (result == 'S') {
+				} else if (result == 'T') {
+				}
 				break;
 			case 'B':
 				break;
@@ -25,5 +34,6 @@ int main() {
 				break;
 		}
 	}
+
 	return 0;
 }

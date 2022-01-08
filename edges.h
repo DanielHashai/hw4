@@ -7,7 +7,7 @@ Vertex *createVertex(int value);
 LinkedList *createLinkedList(int size);
 void insertIntoList(Edge *edge);
 void deleteList();
-void createUserList();
+char createUserList();
 void deleteEdge(Edge *current);
 bool listIsNull();
 
