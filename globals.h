@@ -10,4 +10,5 @@
 typedef enum {false, true} bool;
 
 char getChar();
+int getInt();
 bool isInt(char c);

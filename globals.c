@@ -13,7 +13,19 @@ char getChar() {
 		if ((eofCheck == EOF) || (ret == '\0')) return '\0';
 	}
 	
-	if (DEBUG_EN) printf("%s %d in(%c) eofCheck(%d)\n", __FILE__, __LINE__, ret, eofCheck);
+	if (DEBUG_EN) printf("%s %d [getChar] in(%c) eofCheck(%d)\n", __FILE__, __LINE__, ret, eofCheck);
+
+	return ret;
+
+}
+
+int getInt() {
+
+	int ret;
+
+	scanf("%d", &ret);
+	
+	if (DEBUG_EN) printf("%s %d [getInt] in(%d)\n", __FILE__, __LINE__, ret);
 
 	return ret;
 

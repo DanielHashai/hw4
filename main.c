@@ -3,6 +3,28 @@
 #include "nodes.h"
 #include "edges.h"
 
+char doA() {
+    if (!graphIsNull()) {
+	deleteGraph();
+    }
+    return createUserList();
+}
+
+char doB() {
+    return addVertex();
+}
+
+
+char doS() {
+    return addVertex();
+}
+
+
+
+char doT() {
+    return addVertex();
+}
+
 int main() {
 
 	while (true) {
@@ -10,32 +32,40 @@ int main() {
 		char cmd = getChar();
 		char result = '\0';
 
+		if (DEBUG_EN) printf("%s %d [main] cmd(%c)\n", __FILE__, __LINE__, cmd);
 		if (cmd == '\0') return 0;
 
 		switch (cmd) {
 			case 'A':
-				if (!graphIsNull()) {
-					deleteGraph();
-				}
-				result = createUserList();
-				if ((result == '\0') || (result == EOF) || (result == CHAR_SUCCESS)) {
-					return 0;
-				} else if (result == 'B') {
-				} else if (result == 'S') {
-				} else if (result == 'T') {
-				}
+			    result = doA();
+			    if ((result == '\0') || (result == EOF) || (result == CHAR_SUCCESS)) {
+				return 0;
+			    } else if (result == 'B') {
+				doB();
+			    } else if (result == 'S') {
+				doS();
+			    } else if (result == 'T') {
+				doT();
+			    }
 				break;
 			case 'B':
-				if (!graphIsNull()) {
-				    result = addVertex();	
-				}
-				break;
+			    result = addVertex();
+			    if ((result == '\0') || (result == EOF) || (result == CHAR_SUCCESS)) {
+				return 0;
+			    } else if (result == 'B') {
+				doB();
+			    } else if (result == 'S') {
+				doS();
+			    } else if (result == 'T') {
+				doT();
+			    }
+			    break;
 			case 'S':
-				break;
+			    break;
 			case 'T':
-				break;
+			    break;
 			default:
-				break;
+			    break;
 		}
 	}
 

@@ -122,11 +122,9 @@ int getFreeVertexId() {
 // input - CMD NUM_EDGES n EDGE_VALUE TO WEIGHT TO WEIGHT ... n EDGE_VALUE ..
 char createUserList() {
 
-	int size;
-	char dummy;
+	int size = getInt();
+	char dummy = getChar();
 
-	scanf("%d", &size);
-	dummy = getChar();
 	numVertices = size;
 
 	vertices = (Vertex **)malloc(sizeof(Vertex*) * size);
@@ -140,17 +138,15 @@ char createUserList() {
 
 		vertexCnt--;
 
-		int value, weight;
-		char toValue;
+		int value = getInt();
 
-		scanf("%d", &value);
-
-		int i = getVertexId(value) != -1 ? getVertexId(value) : getFreeVertexId();
+		int vertexId = getVertexId(value);
+		int i = vertexId != -1 ? vertexId : getFreeVertexId();
 		vertices[i]->value = value;
 
 		if (DEBUG_EN) printf("%s %d size(%d) dummy(%c) vertice_i(%d) value(%d)\n", __FILE__, __LINE__, size, dummy, i, value);
 
-		toValue = getChar();
+		char toValue = getChar();
 
 		if (toValue == DIVIDER) continue;
 		if (!isInt(toValue)) return toValue;
@@ -158,7 +154,7 @@ char createUserList() {
 		LinkedList *list = createLinkedList();
 
 		while (isInt(toValue)) {
-			scanf("%d", &weight);
+			int weight = getInt();
 			int toVertexId = getVertexId(atoi(&toValue));
 			if (toVertexId == -1) { // if vertex doesnt exist yet, set the next available vertex to the toValue, otherwise take existing vertex pointer
 			    toVertexId = getFreeVertexId();
@@ -216,21 +212,20 @@ void deleteVertex(Vertex *current) {
 
 char addVertex() {
 
-    char value, toValue;
     bool vertexExists = false;
 
-    value = getChar();
+    char value = getChar();
     if (!isInt(value)) return value;
 
     Vertex *newVertex = createVertex();
     newVertex->value = atoi(&value);
     
-    toValue = getChar();
     LinkedList *list = createLinkedList();
+    char toValue = getChar();
     while (isInt(toValue)) {
-	int weight;
-	scanf("%d", &weight);
+	int weight = getInt();
 	int toVertexId = getVertexId(atoi(&toValue));
+    printf("\ntovalue %c %d toVertex%d\n", toValue, atoi(&toValue),toVertexId);	
 	Vertex *toVertex = vertices[toVertexId];
     	insertIntoList(list, createEdge(weight, toVertex));
 	toValue = getChar();
