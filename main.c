@@ -5,13 +5,17 @@
 
 char doA() {
     if (!graphIsNull()) {
-	deleteGraph();
+	freeGraph();
     }
-    return createUserList();
+    char ret = createUserList();
+    printGraph();
+    return ret;
 }
 
 char doB() {
-    return addVertex();
+    char ret = addVertex();
+    printGraph();
+    return ret;
 }
 
 
@@ -20,6 +24,8 @@ char doS() {
 }
 
 char doD() {
+    deleteVertex();
+    printGraph();
     return getCharOnly();
 }
 
@@ -45,11 +51,9 @@ int main() {
 		switch (cmd) {
 			case 'A':
 			    cmd = doA();
-			    printGraph();
 			    break;
 			case 'B':
 			    cmd = doB();
-			    printGraph();
 			    break;
 			case 'S':
 			    cmd = doS();
@@ -65,7 +69,7 @@ int main() {
 		}
 	}
 
-	deleteGraph();
+	freeGraph();
 
 	return 0;
 }

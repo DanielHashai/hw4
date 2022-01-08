@@ -4,14 +4,15 @@
 
 Edge *createEdge(int weight, Vertex *to);
 Vertex *createVertex();
+void deleteVertex();
 LinkedList *createLinkedList();
 void insertIntoList(LinkedList *list, Edge *edge);
-void deleteGraph();
+void freeGraph();
 char createUserList();
-void deleteEdge(Edge *current);
+void freeEdge(Edge *current);
 bool graphIsNull();
 char addVertex();
-void deleteVertex(Vertex *current);
+void freeVertex(Vertex *current);
 void printVertex(Vertex *vertex);
 void printGraph();
 

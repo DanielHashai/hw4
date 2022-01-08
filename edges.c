@@ -202,29 +202,29 @@ char createUserList() {
 
 }
 
-void deleteGraph() {
+void freeGraph() {
 	for (int i = 0; i < numVertices; i++) {
-	    deleteVertex(vertices[i]);
+	    freeVertex(vertices[i]);
 	}
 }
 
-void deleteEdge(Edge *current) {
+void freeEdge(Edge *current) {
 
 	if (current == null) return;
 
 	Edge *next = current->next;
 
-	deleteEdge(next);
+	freeEdge(next);
 	free(current);
 
 }
 
-void deleteVertex(Vertex *current) {
+void freeVertex(Vertex *current) {
 
 	if (current == null) return;
 
 	if (current->edges != null) {
-	    deleteEdge(current->edges->head);
+	    freeEdge(current->edges->head);
 	}
 	free(current);
 
@@ -271,18 +271,22 @@ char addVertex() {
     numVertices = newSize;
 
     Vertex **newVertices = (Vertex **) malloc(sizeof(Vertex*) * newSize);
+
     for (int i = 0; i < oldSize; i++) {
+
 	if (vertices[i]->value != atoi(&value)) {
 	    // copy vertex to new vertex array
 	    newVertices[i] = vertices[i];
 	    continue;
-	} else {
-	    // value exists and therefore need to delete and then update in array
-	    if (DEBUG_EN) printf("%s %d [addVertex] delete vertex(%d) at i(%d)\n", __FILE__, __LINE__, atoi(&value), i);
-	    printVertex(vertices[i]);
-	    deleteVertex(vertices[i]);
-	    newVertices[i] = newVertex;
-	}
+	} 
+	
+	// value exists and therefore need to delete and then update in array
+	if (DEBUG_EN) printf("%s %d [addVertex] delete vertex(%d) at i(%d)\n", __FILE__, __LINE__, atoi(&value), i);
+	printVertex(vertices[i]);
+
+	freeVertex(vertices[i]);
+	newVertices[i] = newVertex;
+
     }
 
     if (!vertexExists) { // if vertex isn't in list, then previous for loop didn't insert the new vertex, therefore add to last index in array 
@@ -296,4 +300,55 @@ char addVertex() {
     if (DEBUG_EN) printf("%s %d [addVertex] done ret(%c)\n", __FILE__, __LINE__, toValue);
     return toValue;
 
+}
+
+void deleteEdgeFromList(Vertex *vertex, int valueToRemove) {
+
+    if (vertex->edges->head->to->value == valueToRemove) {
+	Edge *edgeToRemove = vertex->edges->head;
+	vertex->edges->head = vertex->edges->head->next;
+	free(edgeToRemove);
+	return;
+    }
+
+    Edge *iterator = vertex->edges->head->next;
+    Edge *previous = vertex->edges->head;
+    while (iterator != null) {
+	if (iterator->to->value == valueToRemove) {
+	    Edge *edgeToRemove = iterator;
+	    previous->next = iterator->next;
+	    free(edgeToRemove);
+	    return;
+	}
+        previous = iterator;
+        iterator = iterator->next;
+    }
+}
+
+void deleteVertex() {
+
+    int value = getInt();
+    int vertexId = getVertexId(value);
+
+    for (int i = 0; i < numVertices; i++) {
+	if (vertexId == i) continue;
+	deleteEdgeFromList(vertices[i], value);
+    }
+
+    Vertex **newVertices = (Vertex **) malloc(sizeof(Vertex*) * (numVertices-1)); // removing vertice so need to allocate less memory
+
+    for (int new_i = 0, old_i = 0; old_i < numVertices; old_i++) {
+
+	if (vertices[old_i]->value != value) {
+	    // copy vertex to new vertex array
+	    newVertices[new_i++] = vertices[old_i];
+	    continue;
+	}
+
+	// value == the vertex that we should delete
+	freeVertex(vertices[old_i]);
+
+    }
+
+    numVertices--;
 }
