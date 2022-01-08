@@ -58,7 +58,13 @@ void printVertex(Vertex *vertex) {
 	char falseStr[MAX_STR] = "false";
 
 	if (DEBUG_EN) {
-		printf("%s %d [VERTEX] value(%d) smallestWeight(%d) visited(%s) numConnections(%d)\n", __FILE__, __LINE__, vertex->value, vertex->smallestWeight,vertex->visited ? trueStr : falseStr, vertex->edges != null ? vertex->edges->size : 0);
+	    printf("%s %d [VERTEX] value(%d) head_value(%d) smallestWeight(%d) visited(%s) numConnections(%d)\n", __FILE__, __LINE__, 
+		    vertex->value, 
+		    vertex->edges != null && vertex->edges->head != null && vertex->edges->head->to != null ? vertex->edges->head->to->value : -1, 
+		    vertex->smallestWeight, 
+		    vertex->visited ? trueStr : falseStr, 
+		    vertex->edges != null ? vertex->edges->size : 1
+	    );
 	}
 
 	Edge *edge = (vertex->edges != null) ? vertex->edges->head : null;
@@ -158,7 +164,7 @@ char createUserList() {
 		int i = vertexId != -1 ? vertexId : getFreeVertexId();
 		vertices[i]->value = value;
 
-		if (DEBUG_EN && EXTRA_DEBUG_EN) printf("%s %d [createUserList] size(%d) dummy(%c) vertice_id(%d) value(%d) vertexCnt(%d)\n", __FILE__, __LINE__, size, dummy, i, value,vertexCnt);
+		if (DEBUG_EN && EXTRA_DEBUG_EN) printf("%s %d [createUserList] size(%d) dummy(%c) vertice_id(%d) value(%d) vertexCnt(%d)\n", __FILE__, __LINE__, size, dummy, i, value,vertexCnt+1);
 
 		char toValue = getChar();
 
@@ -305,7 +311,21 @@ char addVertex() {
 }
 
 void deleteEdgeFromList(Vertex *vertex, int valueToRemove) {
-printGraph();
+		    if (DEBUG_EN) printf("%s %d [createUserList] here vertex %d \n", __FILE__, __LINE__,vertex->value);
+
+    if (vertex->edges == null) return;
+
+    bool hasEdge = false;
+    Edge *iterator = vertex->edges->head;
+    while (iterator != null) {
+	if (iterator->to->value == valueToRemove) {
+	    hasEdge = true;
+	    break;
+	}
+	iterator = iterator->next;
+    }
+    if (!hasEdge) return;
+
     if (vertex->edges->head->to->value == valueToRemove) {
 	if (DEBUG_EN) printf("%s %d [deleteEdgeFromList] at head value %d\n", __FILE__, __LINE__, valueToRemove);
 	Edge *edgeToRemove = vertex->edges->head;
@@ -314,7 +334,7 @@ printGraph();
 	return;
     }
 
-    Edge *iterator = vertex->edges->head->next;
+    iterator = vertex->edges->head->next;
     Edge *previous = vertex->edges->head;
     while (iterator != null) {
 	if (DEBUG_EN) printf("%s %d [deleteEdgeFromList] valueToRemove(%d) iterator_value(%d)\n", __FILE__, __LINE__, valueToRemove, iterator->to->value);
