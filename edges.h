@@ -3,7 +3,7 @@
 #include "nodes.h"
 
 Edge *createEdge(int weight, Vertex *to);
-Vertex *createVertex(int value);
+Vertex *createVertex();
 LinkedList *createLinkedList();
 void insertIntoList(LinkedList *list, Edge *edge);
 void deleteGraph();

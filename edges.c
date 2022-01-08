@@ -33,7 +33,7 @@ void printList(Vertex *in[], int size, int from) {
 void printEdge(Edge *edge) {
 
 	if (DEBUG_EN) {
-		printf("%s %d [edge]to(%d) weight(%d) nextExists(%s)\n",  __FILE__, __LINE__, edge->to->value, edge->weight, edge->next == null ? "false" : "true");
+		printf("%s %d [edge] to(%d) weight(%d) nextExists(%s)\n",  __FILE__, __LINE__, edge->to->value, edge->weight, edge->next == null ? "false" : "true");
 	}
 
 }
@@ -69,9 +69,9 @@ Edge *createEdge(int weight, Vertex *to) {
 	return edge;
 }
 
-Vertex *createVertex(int value) {
+Vertex *createVertex() {
 	Vertex *vertex = (Vertex * ) malloc(sizeof(Vertex));
-	vertex->value = value;
+	vertex->value = -1;
 	vertex->edges = null;
 	vertex->smallestWeight = MAX_WEIGHT;
 	vertex->visited = false;
@@ -97,6 +97,28 @@ void insertIntoList(LinkedList *list, Edge *edge) {
 	list->size++;
 }
 
+int getVertexId(int value) {
+    int ret = -1;
+    for (int i = 0; i < numVertices; i++) {
+	if (vertices[i]->value != value) continue;
+	ret = i;
+	break;
+    }
+    if (DEBUG_EN) printf("%s %d [getVertexId] value(%d) id(%d)\n", __FILE__, __LINE__, value, ret);
+    return ret;
+}
+
+int getFreeVertexId() {
+    int ret = -1;
+    for (int i = 0; i < numVertices; i++) {
+	if (vertices[i]->value != -1) continue;
+	ret = i;
+	break;
+    }
+    if (DEBUG_EN) printf("%s %d [getFreeVertexId] id(%d)\n", __FILE__, __LINE__, ret);
+    return ret;
+}
+
 // input - CMD NUM_EDGES n EDGE_VALUE TO WEIGHT TO WEIGHT ... n EDGE_VALUE ..
 char createUserList() {
 
@@ -107,32 +129,55 @@ char createUserList() {
 	dummy = getChar();
 	numVertices = size;
 
-	vertices = (Vertex **) malloc(sizeof(Vertex*) * size);
+	vertices = (Vertex **)malloc(sizeof(Vertex*) * size);
 
 	for (int i = 0; i < size; i++) {
-		int value;
-		char weight;
+		vertices[i] = createVertex();
+	}
+
+	int vertexCnt = size;
+	while (vertexCnt > 0) {
+
+		vertexCnt--;
+
+		int value, weight;
+		char toValue;
 
 		scanf("%d", &value);
-		vertices[i] = createVertex(value);
+
+		int i = getVertexId(value) != -1 ? getVertexId(value) : getFreeVertexId();
+		vertices[i]->value = value;
 
 		if (DEBUG_EN) printf("%s %d size(%d) dummy(%c) vertice_i(%d) value(%d)\n", __FILE__, __LINE__, size, dummy, i, value);
 
-		weight = getChar();
+		toValue = getChar();
+
+		if (toValue == DIVIDER) continue;
+		if (!isInt(toValue)) return toValue;
+
 		LinkedList *list = createLinkedList();
 
-		while (isInt(weight)) {
-			insertIntoList(list, createEdge(atoi(&weight), vertices[i]));
-			weight = getChar();
+		while (isInt(toValue)) {
+			scanf("%d", &weight);
+			int toVertexId = getVertexId(atoi(&toValue));
+			if (toVertexId == -1) { // if vertex doesnt exist yet, set the next available vertex to the toValue, otherwise take existing vertex pointer
+			    toVertexId = getFreeVertexId();
+			    vertices[toVertexId]->value = atoi(&toValue);
+			}
+			Vertex *toVertex = vertices[toVertexId];
+			
+			insertIntoList(list, createEdge(weight, toVertex));
+
+			toValue = getChar();
 		}
 		vertices[i]->edges = list;
 
-		if (weight == DIVIDER) {
+		if (toValue == DIVIDER) {
 			printVertex(vertices[i]);
 			continue;
 		} else {
 			printVertex(vertices[i]);
-			return weight;
+			return toValue;
 		}
 
 	}
@@ -145,7 +190,6 @@ void deleteGraph() {
 	for (int i = 0; i < numVertices; i++) {
 	    deleteVertex(vertices[i]);
 	}
-	numVertices = 0;
 }
 
 void deleteEdge(Edge *current) {
@@ -172,28 +216,35 @@ void deleteVertex(Vertex *current) {
 
 char addVertex() {
 
-    int value;
-    char weight;
+    char value, toValue;
     bool vertexExists = false;
 
-    scanf("%d", &value);
-    Vertex *newVertex = createVertex(value);
+    value = getChar();
+    if (!isInt(value)) return value;
 
-    weight = getChar();
+    Vertex *newVertex = createVertex();
+    newVertex->value = atoi(&value);
+    
+    toValue = getChar();
     LinkedList *list = createLinkedList();
-
-    while (isInt(weight)) {
-    	insertIntoList(list, createEdge(atoi(&weight), newVertex));
-    	weight = getChar();
+    while (isInt(toValue)) {
+	int weight;
+	scanf("%d", &weight);
+	int toVertexId = getVertexId(atoi(&toValue));
+	Vertex *toVertex = vertices[toVertexId];
+    	insertIntoList(list, createEdge(weight, toVertex));
+	toValue = getChar();
     }
     newVertex->edges = list;
+
+    printVertex(newVertex);
 
     if (numVertices == 0) { // shouldn't happen and will happen if input isn't valid
 	return '\0';
     }
 
-    for (int i = 0; i < numVertices; i ++) {
-	if (vertices[i]->value != value) continue; // continue loop until value matches a vertex value that we already have
+    for (int i = 0; i < numVertices; i++) {
+	if (vertices[i]->value != atoi(&value)) continue; // continue loop until value matches a vertex value that we already have
 	vertexExists = true;
 	break;
     }
@@ -205,12 +256,14 @@ char addVertex() {
 
     Vertex **newVertices = (Vertex **) malloc(sizeof(Vertex*) * newSize);
     for (int i = 0; i < oldSize; i++) {
-	if (vertices[i]->value != value) {
+	if (vertices[i]->value != atoi(&value)) {
 	    // copy vertex to new vertex array
 	    newVertices[i] = vertices[i];
 	    continue;
 	} else {
 	    // value exists and therefore need to delete and then update in array
+	    if (DEBUG_EN) printf("%s %d [addVertex] delete vertex(%d) at i(%d)\n", __FILE__, __LINE__, atoi(&value), i);
+	    printVertex(vertices[i]);
 	    deleteVertex(vertices[i]);
 	    newVertices[i] = newVertex;
 	}
@@ -220,6 +273,10 @@ char addVertex() {
 	newVertices[newSize-1] = newVertex;
     }
 
-    return weight;
+    free(vertices); // free older pointer of vertices
+    vertices = newVertices;
+    if (DEBUG_EN) printf("%s %d [addVertex] add vertex(%d) numVertices(%d) vertexExists(%d)\n", __FILE__, __LINE__, atoi(&value), numVertices, vertexExists);
+
+    return toValue;
 
 }
