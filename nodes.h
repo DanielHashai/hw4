@@ -18,7 +18,6 @@ struct _Edge {
 struct _Vertex {
 	int value;
 	LinkedList *edges;
-	int smallestWeight;
 	bool visited;
 };
 

@@ -13,14 +13,14 @@ bool isVisited(Vertex *vertex) {
 	return vertex->visited;
 }
 
-void visitList(int from) {
+void visitGraph(int from) {
 	Vertex *toVisit[numVertices], *current;
 	int top = -1;
 	toVisit[++top] = vertices[from];
 	while((current = toVisit[top--])) {
 		if(isVisited(current) == false) {
 			visit(current);
-			Edge *iterator = current->edges->head;
+			Edge *iterator = current->edges != null ? current->edges->head : null;
 			while(iterator != null) {
 				toVisit[++top] = iterator->to;
 				iterator = iterator->next;
@@ -58,11 +58,10 @@ void printVertex(Vertex *vertex) {
 	char falseStr[MAX_STR] = "false";
 
 	if (DEBUG_EN) {
-	    printf("%s %d [VERTEX] value(%d) head_value(%d) tail_value(%d) smallestWeight(%d) visited(%s) numConnections(%d)\n", __FILE__, __LINE__, 
+	    printf("%s %d [VERTEX] value(%d) head_value(%d) tail_value(%d) visited(%s) numConnections(%d)\n", __FILE__, __LINE__, 
 		    vertex->value, 
 		    vertex->edges != null && vertex->edges->head != null && vertex->edges->head->to != null ? vertex->edges->head->to->value : -1, 
 		    vertex->edges != null && vertex->edges->head != null && vertex->edges->tail->to != null ? vertex->edges->tail->to->value : -1, 
-		    vertex->smallestWeight, 
 		    vertex->visited ? trueStr : falseStr, 
 		    vertex->edges != null ? vertex->edges->size : 1
 	    );
@@ -92,7 +91,6 @@ Vertex *createVertex() {
 	Vertex *vertex = (Vertex * ) malloc(sizeof(Vertex));
 	vertex->value = -1;
 	vertex->edges = null;
-	vertex->smallestWeight = MAX_WEIGHT;
 	vertex->visited = false;
 	return vertex;
 }
