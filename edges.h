@@ -16,6 +16,7 @@ void freeVertex(Vertex *current);
 void printVertex(Vertex *vertex);
 void printGraph();
 int getWeight(int from, int to);
+int getVertexId(int value);
 
 int numVertices;
 Vertex **vertices;

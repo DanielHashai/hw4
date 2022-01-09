@@ -45,7 +45,7 @@ void printGraph() {
 void printEdge(Edge *edge) {
 
 	if (DEBUG_EN) {
-		printf("%s %d [EDGE] to(%d) weight(%d) nextExists(%s)\n",  __FILE__, __LINE__, edge->to->value, edge->weight, edge->next == null ? "false" : "true");
+		printf("%s %d [EDGE] to(%d) weight(%d) next(%d)\n",  __FILE__, __LINE__, edge->to->value, edge->weight, edge->next == null ? -1 : edge->next->to->value);
 	}
 
 }
@@ -391,13 +391,13 @@ void deleteVertex() {
 
 int getWeight(int from, int to) {
 
-    int ret = MAX_WEIGHT;
+    int ret = 0;
 
     int fromId = getVertexId(from);
     Vertex *fromVertex = vertices[fromId];
 
     Edge *iterator = fromVertex->edges != null && fromVertex->edges->head != null ? fromVertex->edges->head : null;
-    while (iterator != null) {
+    while (iterator != null && (from != to)) {
 	if (iterator->to->value == to) {
 	    ret = iterator->weight;
 	    break;
