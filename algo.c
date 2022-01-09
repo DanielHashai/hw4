@@ -197,6 +197,15 @@ void print1DArray(int arr[], int size)
     if (DEBUG_EN) printf("\n");
 }
 
+void print1DVertexBoolArray(bool arr[], int size)
+{
+    if (DEBUG_EN) printf("%s %d [print1DBoolArray] size(%d) arr: ", __FILE__,__LINE__, size);
+    for (int i = 0; i < size; i++) {
+	if (DEBUG_EN) printf("%d ", arr[i]);
+    }
+    if (DEBUG_EN) printf("\n");
+}
+
 void print2DArray(int **arr, int row, int col)
 {
     for(int i=0; i<row; i++) {
@@ -264,12 +273,15 @@ int travelingSalesmanProblem(int **graph, int *verticesInPath, int numVerticesIn
 
     if (DEBUG_EN) printf("%s %d [TSP] start numOfPermutations(%d) minPath(%d) permutationRowId(%d)\n", __FILE__, __LINE__, numOfPermutations, minPath, permutationRowId);
     print2DArray(verticesPermutations, numOfPermutations, numVertices);
+    print1DArray(verticesInPath, numVerticesInPath);
 
     int numValidRows = (permutationRowId < numOfPermutations) ? permutationRowId : numOfPermutations;
-    // store current Path weight(cost)
-    int currentPathWeight = 0;
+    
     for (int i = 0; i < numValidRows; i++) {
 	int *currentVerticesPermutation = verticesPermutations[i];
+
+	// store current Path weight(cost)
+        int currentPathWeight = 0;
 
     	// compute current path weight
 	int fromValue = currentVerticesPermutation[0];
@@ -280,56 +292,56 @@ int travelingSalesmanProblem(int **graph, int *verticesInPath, int numVerticesIn
 	}
 	if (DEBUG_EN) printf("%s %d [TSP] permutation %d\n=============\n", __FILE__, __LINE__, i);
 	print1DArray(currentVerticesPermutation, numVertices);
-    if (DEBUG_EN) printf("%s %d [TSP] here\n", __FILE__, __LINE__);
+   // if (DEBUG_EN) printf("%s %d [TSP] here\n", __FILE__, __LINE__);
     	for (int j = 1; j < numVertices; j++) {
 
-    if (DEBUG_EN) printf("%s %d [TSP] here j %d\n", __FILE__, __LINE__,j);
+   // if (DEBUG_EN) printf("%s %d [TSP] here j %d\n", __FILE__, __LINE__,j);
 	print1DArray(currentVerticesPermutation, numVertices);
 	    int toValue = currentVerticesPermutation[j];
 	    int toGraphId = getVertexId(toValue);
-    if (DEBUG_EN) printf("%s %d [TSP] here j %d\n", __FILE__, __LINE__,j);
+ //   if (DEBUG_EN) printf("%s %d [TSP] here j %d\n", __FILE__, __LINE__,j);
     	    int pathWeight = graph[fromGraphId][toGraphId];
 
 	    vertexIsInPath[fromGraphId] = true;
-    if (DEBUG_EN) printf("%s %d [TSP] here\n", __FILE__, __LINE__);
+//    if (DEBUG_EN) printf("%s %d [TSP] here\n", __FILE__, __LINE__);
 
 	   //printf("%s %d [TSP] from(%d) to(%d) pathWeight(%d) j(%d) currentPathWeight(%d)\n", __FILE__, __LINE__, fromValue, toValue, pathWeight, j, currentPathWeight);
 
 	    if (pathWeight == 0) {
 		currentPathWeight = 0;
-    if (DEBUG_EN) printf("%s %d [TSP] here break;\n", __FILE__, __LINE__);
+//    if (DEBUG_EN) printf("%s %d [TSP] here break;\n", __FILE__, __LINE__);
 		break;
 	    }
 	   //if (DEBUG_EN) printf("%s %d [TSP] from(%d) to(%d) pathWeight(%d) j(%d)\n", __FILE__, __LINE__, fromValue, toValue, pathWeight, j);
 
-    if (DEBUG_EN) printf("%s %d [TSP] here\n", __FILE__, __LINE__);
+//    if (DEBUG_EN) printf("%s %d [TSP] here\n", __FILE__, __LINE__);
 	    vertexIsInPath[toGraphId] = true;
 
-    if (DEBUG_EN) printf("%s %d [TSP] here\n", __FILE__, __LINE__);
+//    if (DEBUG_EN) printf("%s %d [TSP] here\n", __FILE__, __LINE__);
     	    currentPathWeight += pathWeight;
     	    fromValue = currentVerticesPermutation[j];
 	    fromGraphId = getVertexId(toValue);
 
-    if (DEBUG_EN) printf("%s %d [TSP] here\n", __FILE__, __LINE__);
-	    //bool pathValid = true;
-    	    //for (int k = 0; k < numVerticesInPath; k++) {
-    	    //    if (vertexInList(verticesInPath[k], vertexIsInPath)) continue;
-    	    //    pathValid = false;
-    	    //    break;
-    	    //}
-	    //if (pathValid) break;
+ //   if (DEBUG_EN) printf("%s %d [TSP] here\n", __FILE__, __LINE__);
+	    bool allPathsAreInList = true;
+    	    for (int k = 0; k < numVerticesInPath; k++) {
+    	        if (vertexInList(verticesInPath[k], vertexIsInPath)) continue;
+    	        allPathsAreInList = false;
+    	        break;
+    	    }
+	    if (allPathsAreInList) break;
     	}
 
-	bool pathValid = true;
+	bool allPathsAreInList = true;
     	for (int j = 0; j < numVerticesInPath; j++) {
 	    if (vertexInList(verticesInPath[j], vertexIsInPath)) continue;
-	    pathValid = false;
+	    allPathsAreInList = false;
 	    break;
 	}
 
-	bool updateMin = (currentPathWeight != 0) && (currentPathWeight < minPath)  && pathValid;
+	bool updateMin = (currentPathWeight != 0) && (currentPathWeight < minPath)  && allPathsAreInList;
  
-	if (DEBUG_EN) printf("%s %d [TSP] from(%d) to(%d) currentPathWeight(%d) i(%d) updateMin(%d) pathValid(%d) minPath(%d)\n", __FILE__, __LINE__, currentVerticesPermutation[0], currentVerticesPermutation[numVerticesInPath-1], currentPathWeight, i, updateMin, pathValid, minPath);
+	if (DEBUG_EN) printf("%s %d [TSP] from(%d) to(%d) currentPathWeight(%d) i(%d) updateMin(%d) allPathsAreInList(%d) minPath(%d)\n", __FILE__, __LINE__, currentVerticesPermutation[0], currentVerticesPermutation[numVerticesInPath-1], currentPathWeight, i, updateMin, allPathsAreInList, minPath);
 
     	// update minimum
     	minPath = updateMin ? currentPathWeight : minPath;

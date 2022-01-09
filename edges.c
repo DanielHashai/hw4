@@ -354,17 +354,17 @@ void deleteEdgeFromList(Vertex *vertex, int valueToRemove) {
 
 void deleteVertex() {
 
-    if (DEBUG_EN) printf("%s %d [deleteVertex] done\n", __FILE__, __LINE__);
-    printGraph();
-
     int value = getInt();
     int vertexId = getVertexId(value);
+
+    if (DEBUG_EN) printf("%s %d [deleteVertex] value(%d) CURRENT_GRAPH=>\n", __FILE__, __LINE__, value);
+    printGraph();
+
 
     for (int i = 0; i < numVertices; i++) {
 	if (vertexId == i) continue;
 	deleteEdgeFromList(vertices[i], value);
     }
-    printGraph();
 
     Vertex **newVertices = (Vertex **) malloc(sizeof(Vertex*) * (numVertices-1)); // removing vertice so need to allocate less memory
 

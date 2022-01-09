@@ -3,7 +3,7 @@
 #define null NULL
 #define DEBUG_EN false
 #define EXTRA_DEBUG_EN false
-#define TSP_DEBUG_EN true
+#define TSP_DEBUG_EN false
 #define DEBUG if (DEBUG_EN) printf("%s %d", __FILE__, __LINE__);
 #define MAX_STR 1000
 #define DECIMAL_CHAR_VAL_0 48
