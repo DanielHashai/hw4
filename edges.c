@@ -405,7 +405,7 @@ int getWeight(int from, int to) {
 	iterator = iterator->next;
     }
 
-    if (DEBUG_EN) printf("%s %d [getWeight] from(%d) to(%d) weight(%d)\n", __FILE__, __LINE__, from, to, ret);
+    if (DEBUG_EN && EXTRA_DEBUG_EN) printf("%s %d [getWeight] from(%d) to(%d) weight(%d)\n", __FILE__, __LINE__, from, to, ret);
 
     return ret;
 }

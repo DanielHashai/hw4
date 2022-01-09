@@ -156,7 +156,7 @@ char doTSP() {
     }
     if (DEBUG_EN) printf("%s %d [doTSP] start numVerticesInPath(%d) vertixIsInPath: ", __FILE__, __LINE__, numVerticesInPath);
     for (int i = 0; i < numVertices; i++) {
-	if (DEBUG_EN) printf("[%d]-%s ", i, vertexIsInPath[i] ? "true" : "false");
+	if (DEBUG_EN) printf("[%d/%d]-%s ", i, vertices[i]->value, vertexIsInPath[i] ? "true" : "false");
     }
     if (DEBUG_EN) printf("\n");
 
@@ -164,8 +164,13 @@ char doTSP() {
     int **A = getGraph();
 
     for (int fromId = 0; fromId < numVertices; fromId++) {
+
+	if (!vertexIsInPath[fromId]) continue;
+
 	for (int toId = 0; toId < numVertices; toId++) {
 
+	    if (!vertexIsInPath[toId]) continue;
+	    
             int sc=0;
 	    
     	    int **C = allocateTwoDimenArrayOnHeapUsingMalloc(numVertices, numVertices);
@@ -189,10 +194,10 @@ char doTSP() {
 	    // check if there is a new minimum and if edges in path are what we got from user input
 	    printf("\n\nMinimum traveled distance = %d.",fsum);
 	    for(int i=0;i<=sc;i++){
-    	        printf("\n\n\tpath direction type %d: %d -->",i+1,toId);
+    	        printf("\n\n\tpath direction type %d: %d -->",i,fromId);
     	        for(int j=0;j<numVertices-1;j++)
     	            printf(" %d -->",fpath[i][j]+1);
-    	        printf(" %d -> %d",fromId, toId);
+    	        printf(" -> %d", toId);
     	    }
     	    printf("\n\n\n");
 
