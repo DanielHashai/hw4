@@ -151,8 +151,8 @@ char doTSP() {
 
     }
     if (DEBUG_EN) printf("%s %d [doTSP] start numVerticesInPath(%d) vertixIsInPath: ", __FILE__, __LINE__, numVerticesInPath);
-    for (int i = 0; i < numVertices; i++) {
-	if (DEBUG_EN) printf("[%d/%d]-%s ", i, vertices[i]->value, vertexIsInPath[i] ? "true" : "false");
+    for (int i = 0; i < numVerticesInPath; i++) {
+	if (DEBUG_EN) printf("%d ", vertexIsInPath[i]);
     }
     if (DEBUG_EN) printf("\n");
 
@@ -173,9 +173,67 @@ void swap(int *a, int *b) {
     *b = tmp;
 }
 
-int** getVerticesPermutations(int numOfPermutations, int numVerticesInPath) {
-    int **ret = allocateTwoDimenArrayOnHeapUsingMalloc(numOfPermutations, numVerticesInPath);
+static int permutationRowId = 0;
 
+//function to print the array
+void updateOut(int **out, int arr[], int size)
+{
+    int rowId = permutationRowId++;
+    if (DEBUG_EN) printf("%s %d [updateOut] row %d size(%d):\t", __FILE__, __LINE__, rowId, size);
+    print1DArray(arr, size);
+    for(int i=0; i<size; i++)
+    {
+	out[rowId][i] = arr[i];
+    }
+    if (DEBUG_EN) printf("\n");
+}
+
+void print1DArray(int arr[], int size)
+{
+    if (DEBUG_EN) printf("%s %d [print1DArray] size(%d) arr: ", __FILE__,__LINE__, size);
+    for (int i = 0; i < size; i++)
+	if (DEBUG_EN) printf("%d ", arr[i]);
+    if (DEBUG_EN) printf("\n");
+}
+
+void print2DArray(int **arr, int row, int col)
+{
+    for(int i=0; i<row; i++) {
+	if (DEBUG_EN) printf("%s %d [print2DArray] row %d:\t", __FILE__, __LINE__, i);
+	for(int j=0; j<col; j++) {
+	    if (DEBUG_EN) printf("%d\t", arr[i][j]);
+	}
+	if (DEBUG_EN) printf("\n");
+    }
+    if (DEBUG_EN) printf("\n");
+}
+
+//permutation function
+void permutation(int **out, int *arr, int start, int end)
+{
+    if(start==end)
+    {
+        updateOut(out, arr, end+1);
+        return;
+    }
+    int i;
+    for(i=start;i<=end;i++)
+    {
+        //swapping numbers
+        swap((arr+i), (arr+start));
+        //fixing one first digit
+        //and calling permutation on
+        //the rest of the digits
+        permutation(out, arr, start+1, end);
+        swap((arr+i), (arr+start));
+    }
+}
+
+int** getPermutations(int *elements, int size) {
+    print1DArray(elements, size);
+    int numOfPermutations = (int)pow(2, size);
+    int **ret = allocateTwoDimenArrayOnHeapUsingMalloc(numOfPermutations, size);
+    permutation(ret, elements, 0, size-1);
     return ret;
 }
 
@@ -184,10 +242,14 @@ int travelingSalesmanProblem(int **graph, int *verticesInPath, int numVerticesIn
 {
 
     int numOfPermutations = (int)pow(2, numVerticesInPath);
-    int **verticesPermutations = getVerticesPermutations(numOfPermutations, numVerticesInPath);
+    int **verticesPermutations = getPermutations(verticesInPath, numVerticesInPath);
     int minPath = MAX_WEIGHT;
 
-    for (int i = 0; i < numOfPermutations; i++) {
+    if (DEBUG_EN) printf("%s %d [TSP] start numOfPermutations(%d) minPath(%d) permutationRowId(%d)\n", __FILE__, __LINE__, numOfPermutations, minPath, permutationRowId);
+    print2DArray(verticesPermutations, numOfPermutations, numVerticesInPath);
+
+    int numValidRows = (permutationRowId < numOfPermutations) ? permutationRowId : numOfPermutations;
+    for (int i = 0; i < numValidRows; i++) {
 	int *currentVerticesPermutation = verticesPermutations[i];
 
     	// store current Path weight(cost)
@@ -211,6 +273,7 @@ int travelingSalesmanProblem(int **graph, int *verticesInPath, int numVerticesIn
     }
 
     destroyTwoDimenArrayOnHeapUsingFree(verticesPermutations, numVertices,numVertices);
- 
+    permutationRowId = 0; // initialize for next call
+
     return minPath == MAX_WEIGHT ? -1 : minPath;
 }

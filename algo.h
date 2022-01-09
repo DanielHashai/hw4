@@ -14,4 +14,7 @@ int travelingSalesmanProblem(int **graph, int *verticesInPath, int numVerticesIn
 int** getGraph();
 void print2DGraph(int **graph);
 void swap(int *a, int *b);
-int** getVerticesPermutations(int numOfPermutations, int numVerticesInPath);
+int** getPermutations(int *elements, int size);
+void permutation(int ** out, int *arr, int start, int end);
+void print2DArray(int **arr, int row, int col);
+void print1DArray(int arr[], int size);
