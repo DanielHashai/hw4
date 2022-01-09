@@ -355,6 +355,7 @@ void deleteEdgeFromList(Vertex *vertex, int valueToRemove) {
 void deleteVertex() {
 
     if (DEBUG_EN) printf("%s %d [deleteVertex] done\n", __FILE__, __LINE__);
+    printGraph();
 
     int value = getInt();
     int vertexId = getVertexId(value);

@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #define null NULL
-#define DEBUG_EN true
+#define DEBUG_EN false
 #define EXTRA_DEBUG_EN false
 #define TSP_DEBUG_EN true
 #define DEBUG if (DEBUG_EN) printf("%s %d", __FILE__, __LINE__);
