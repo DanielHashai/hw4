@@ -19,14 +19,8 @@ int ** allocateTwoDimenArrayOnHeapUsingMalloc(int row, int col)
     return ptr;
 }
 
-void doDijkstra() {
-
-    int from = getInt();
-    int to = getInt();
-
-    if (DEBUG_EN) printf("%s %d [doDijkstra] start from(%d) to(%d)\n", __FILE__, __LINE__, from, to);
-
-    int **graph = allocateTwoDimenArrayOnHeapUsingMalloc(numVertices, numVertices);
+int** getGraph() {
+    int** graph = allocateTwoDimenArrayOnHeapUsingMalloc(numVertices, numVertices);
 
     for (int i = 0; i < numVertices; i++) {
 	Vertex *from = vertices[i];
@@ -36,13 +30,29 @@ void doDijkstra() {
     	}
     }
 
+    print2DGraph(graph);
+
+    return graph;
+}
+
+void print2DGraph(int **graph) {
     for (int i = 0; i < numVertices; i++) {
-	if (DEBUG_EN) printf("%s %d [doDijkstra] graph[%d/%d]: ", __FILE__, __LINE__, i, vertices[i]->value);
+	if (DEBUG_EN) printf("%s %d [print2DGraph] graph[%d/%d]: ", __FILE__, __LINE__, i, vertices[i]->value);
 	for (int j = 0; j < numVertices; j++) {
 	    if (DEBUG_EN) printf("%d ", graph[i][j]);
     	}
 	if (DEBUG_EN) printf("\n");
     }
+}
+
+void doDijkstra() {
+
+    int from = getInt();
+    int to = getInt();
+
+    if (DEBUG_EN) printf("%s %d [doDijkstra] start from(%d) to(%d)\n", __FILE__, __LINE__, from, to);
+
+    int **graph = getGraph();
 
     int *minPathWeights = dijkstra(graph, from);
     printSolution(minPathWeights);
@@ -133,51 +143,113 @@ int* dijkstra(int **G,int startnode)
 
 char doTSP() {
 
+    int numVerticesInPath = getInt();
+    bool *vertexIsInPath = (bool*)(malloc(sizeof(bool)*numVertices));
+    for (int i = 0; i < numVertices; i++) {
+	vertexIsInPath[i] = false;
+    }
+    for (int i = 0; i < numVerticesInPath; i++) {
+	int value = getInt();
+	int vertexId = getVertexId(value);
+	vertexIsInPath[vertexId] = true;
+
+    }
+    if (DEBUG_EN) printf("%s %d [doTSP] start numVerticesInPath(%d) vertixIsInPath: ", __FILE__, __LINE__, numVerticesInPath);
+    for (int i = 0; i < numVertices; i++) {
+	if (DEBUG_EN) printf("[%d]-%s ", i, vertexIsInPath[i] ? "true" : "false");
+    }
+    if (DEBUG_EN) printf("\n");
+
     int tspShortestPath = -1;
-    
+    int **A = getGraph();
+
+    for (int fromId = 0; fromId < numVertices; fromId++) {
+	for (int toId = 0; toId < numVertices; toId++) {
+
+            int sc=0;
+	    
+    	    int **C = allocateTwoDimenArrayOnHeapUsingMalloc(numVertices, numVertices);
+    	    int sum=0,fsum=9999;
+    	    int *path = (int*)malloc(sizeof(int)*(numVertices-1));
+    	    int **fpath =  allocateTwoDimenArrayOnHeapUsingMalloc(1000, numVertices-1);
+
+	    if (fromId == toId) continue;
+
+	    // initialize array
+	    for(int i=0;i<numVertices;i++)
+		for(int j=0;j<numVertices;j++)
+		    C[i][j]=0;
+
+	    // set destination vertex
+	    for(int i=0;i<numVertices;i++)
+		C[i][toId] = toId;
+
+	    TSP(C,A,path,fpath,&sum,&fsum,0,toId,fromId,&sc);
+
+	    // check if there is a new minimum and if edges in path are what we got from user input
+	    printf("\n\nMinimum traveled distance = %d.",fsum);
+	    for(int i=0;i<=sc;i++){
+    	        printf("\n\n\tpath direction type %d: %d -->",i+1,toId);
+    	        for(int j=0;j<numVertices-1;j++)
+    	            printf(" %d -->",fpath[i][j]+1);
+    	        printf(" %d -> %d",fromId, toId);
+    	    }
+    	    printf("\n\n\n");
+
+	    destroyTwoDimenArrayOnHeapUsingFree(C, numVertices,numVertices);
+	    free(path);
+	    destroyTwoDimenArrayOnHeapUsingFree(fpath, 1000, numVertices-1);
+
+	}
+    }
+
     printf("TSP shortest path: %d\n", tspShortestPath);
+
+    free(vertexIsInPath);
+    destroyTwoDimenArrayOnHeapUsingFree(A, numVertices,numVertices);
+
     return getCharOnly();
 }
 
-void TSP(int* C, int* A, int* path, int* fpath, int *sum, int *fsum, int flag, int n, int b, int a, int *sc){
+void TSP(int* C, int* A, int* path, int* fpath, int *sum, int *fsum, int flag, int b, int a, int *sc){
     int i,k;
     flag++;
-    for(k=0;k<n;k++)
-        if(*(C+n*flag+k)==0){  //Checking if any node of (flag+1)-th row is not already reached.
-            *(C+n*flag+k)=k+1;   //Placing the new node in that Vertex.
-            *sum=*sum+*(A+n*b+k);   //Updating total covered path distance.
+    for(k=0;k<numVertices;k++)
+        if(*(C+numVertices*flag+k)==0){  //Checking if any node of (flag+1)-th row is not already reached.
+            *(C+numVertices*flag+k)=k;   //Placing the new node in that Vertex.
+            *sum=*sum+*(A+numVertices*b+k);   //Updating total covered path distance.
             *(path+flag-1)=k;   //Adding the vertex to salesman's path.
 
             /*Updating the Board w.r.t. the newly covered vertex*/
-            if(flag<n){
-                for(i=flag+1;i<n;i++)
-                    *(C+i*n+k)=k+1;
+            if(flag<numVertices){
+                for(i=flag+1;i<numVertices;i++)
+                    *(C+i*numVertices+k)=k;
             }
 
             /*Recursively call TSP function*/
-            if(flag<n-1)
-                TSP(C,A,path,fpath,sum,fsum,flag,n,k,a,sc);
+            if(flag<numVertices-1)
+                TSP(C,A,path,fpath,sum,fsum,flag,k,a,sc);
 
             /*Storing new solution to 'fpath'-array if found.*/
-            if(flag==n-1){
-                *sum=*sum+*(A+n*k+a);
+            if(flag==numVertices-1){
+                *sum=*sum+*(A+numVertices*k+a);
                 if(*sum==*fsum){
                     *sc=*sc+1;
-                    for(i=0;i<n-1;i++)
-                        *(fpath+(*sc)*(n-1)+i)=*(path+i);   //Updating final path direction.
+                    for(i=0;i<numVertices-1;i++)
+                        *(fpath+(*sc)*(numVertices-1)+i)=*(path+i);   //Updating final path direction.
                 }
                 else if(*sum<*fsum){
                     *fsum=*sum; //Updating covered path distance.
                     *sc=0;
-                    for(i=0;i<n-1;i++)
+                    for(i=0;i<numVertices-1;i++)
                         *(fpath+i)=*(path+i);   //Updating final path direction.
                 }
-                *sum=*sum-*(A+n*k+a);
+                *sum=*sum-*(A+numVertices*k+a);
             }
 
             /*Removing the previous node and undoing all its effect*/
-            for(i=flag;i<n;i++)
-                *(C+n*i+k)=0;
-            *sum=*sum-*(A+n*b+k);   //Substructing last added path distance.
+            for(i=flag;i<numVertices;i++)
+                *(C+numVertices*i+k)=0;
+            *sum=*sum-*(A+numVertices*b+k);   //Substructing last added path distance.
         }
 }
