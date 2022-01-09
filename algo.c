@@ -285,7 +285,7 @@ int travelingSalesmanProblem(int **graph, int *verticesInPath, int numVerticesIn
 
 	    vertexIsInPath[fromGraphId] = true;
 
-//	   printf("%s %d [TSP] from(%d) to(%d) pathWeight(%d) j(%d) currentPathWeight(%d)\n", __FILE__, __LINE__, fromValue, toValue, pathWeight, j, currentPathWeight);
+	   //printf("%s %d [TSP] from(%d) to(%d) pathWeight(%d) j(%d) currentPathWeight(%d)\n", __FILE__, __LINE__, fromValue, toValue, pathWeight, j, currentPathWeight);
 
 	    if (pathWeight == 0) {
 		currentPathWeight = 0;
@@ -299,6 +299,14 @@ int travelingSalesmanProblem(int **graph, int *verticesInPath, int numVerticesIn
     	    currentPathWeight += pathWeight;
     	    fromValue = currentVerticesPermutation[j];
 	    fromGraphId = getVertexId(toValue);
+
+	    //bool pathValid = true;
+    	    //for (int k = 0; k < numVerticesInPath; k++) {
+    	    //    if (vertexInList(verticesInPath[k], vertexIsInPath)) continue;
+    	    //    pathValid = false;
+    	    //    break;
+    	    //}
+	    //if (pathValid) break;
     	}
 
 	bool pathValid = true;
