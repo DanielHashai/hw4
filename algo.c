@@ -144,14 +144,10 @@ int* dijkstra(int **G,int startnode)
 char doTSP() {
 
     int numVerticesInPath = getInt();
-    bool *vertexIsInPath = (bool*)(malloc(sizeof(bool)*numVertices));
-    for (int i = 0; i < numVertices; i++) {
-	vertexIsInPath[i] = false;
-    }
+    int *vertexIsInPath = (int*)(malloc(sizeof(int)*numVertices));
     for (int i = 0; i < numVerticesInPath; i++) {
 	int value = getInt();
-	int vertexId = getVertexId(value);
-	vertexIsInPath[vertexId] = true;
+	vertexIsInPath[vertexId] = value;
 
     }
     if (DEBUG_EN) printf("%s %d [doTSP] start numVerticesInPath(%d) vertixIsInPath: ", __FILE__, __LINE__, numVerticesInPath);
@@ -160,101 +156,61 @@ char doTSP() {
     }
     if (DEBUG_EN) printf("\n");
 
-    int tspShortestPath = -1;
-    int **A = getGraph();
-
-    for (int fromId = 0; fromId < numVertices; fromId++) {
-
-	if (!vertexIsInPath[fromId]) continue;
-
-	for (int toId = 0; toId < numVertices; toId++) {
-
-	    if (!vertexIsInPath[toId]) continue;
-	    
-            int sc=0;
-	    
-    	    int **C = allocateTwoDimenArrayOnHeapUsingMalloc(numVertices, numVertices);
-    	    int sum=0,fsum=9999;
-    	    int *path = (int*)malloc(sizeof(int)*(numVertices-1));
-    	    int **fpath =  allocateTwoDimenArrayOnHeapUsingMalloc(1000, numVertices-1);
-
-	    if (fromId == toId) continue;
-
-	    // initialize array
-	    for(int i=0;i<numVertices;i++)
-		for(int j=0;j<numVertices;j++)
-		    C[i][j]=0;
-
-	    // set destination vertex
-	    for(int i=0;i<numVertices;i++)
-		C[i][toId] = toId;
-
-	    TSP(C,A,path,fpath,&sum,&fsum,0,toId,fromId,&sc);
-
-	    // check if there is a new minimum and if edges in path are what we got from user input
-	    printf("\n\nMinimum traveled distance = %d.",fsum);
-	    for(int i=0;i<=sc;i++){
-    	        printf("\n\n\tpath direction type %d: %d -->",i,fromId);
-    	        for(int j=0;j<numVertices-1;j++)
-    	            printf(" %d -->",fpath[i][j]+1);
-    	        printf(" -> %d", toId);
-    	    }
-    	    printf("\n\n\n");
-
-	    destroyTwoDimenArrayOnHeapUsingFree(C, numVertices,numVertices);
-	    free(path);
-	    destroyTwoDimenArrayOnHeapUsingFree(fpath, 1000, numVertices-1);
-
-	}
-    }
+    int **graph = getGraph();
+    int tspShortestPath = travelingSalesmanProblem(graph, vertexIsInPath, numVerticesInPath);
 
     printf("TSP shortest path: %d\n", tspShortestPath);
 
     free(vertexIsInPath);
-    destroyTwoDimenArrayOnHeapUsingFree(A, numVertices,numVertices);
+    destroyTwoDimenArrayOnHeapUsingFree(graph, numVertices,numVertices);
 
     return getCharOnly();
 }
 
-void TSP(int* C, int* A, int* path, int* fpath, int *sum, int *fsum, int flag, int b, int a, int *sc){
-    int i,k;
-    flag++;
-    for(k=0;k<numVertices;k++)
-        if(*(C+numVertices*flag+k)==0){  //Checking if any node of (flag+1)-th row is not already reached.
-            *(C+numVertices*flag+k)=k;   //Placing the new node in that Vertex.
-            *sum=*sum+*(A+numVertices*b+k);   //Updating total covered path distance.
-            *(path+flag-1)=k;   //Adding the vertex to salesman's path.
+void swap(int *a, int *b) {
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
 
-            /*Updating the Board w.r.t. the newly covered vertex*/
-            if(flag<numVertices){
-                for(i=flag+1;i<numVertices;i++)
-                    *(C+i*numVertices+k)=k;
-            }
+// implementation of traveling Salesman Problem
+int travelingSalesmanProblem(int **graph, Vertices *verticesInPath, int numVerticesInPath)
+{
 
-            /*Recursively call TSP function*/
-            if(flag<numVertices-1)
-                TSP(C,A,path,fpath,sum,fsum,flag,k,a,sc);
+    int numOfPermutations = (int)pow(2, numVerticesInPath);
+    int verticesPermutations_i = 0;
+    int **verticesPermutations = getVerticesPermutations(numOfPermutations, numVerticesInPath);
+    bool *verticesPermutationsIsValid = (bool*)(malloc(sizeof(bool)*numOfPermutations));
 
-            /*Storing new solution to 'fpath'-array if found.*/
-            if(flag==numVertices-1){
-                *sum=*sum+*(A+numVertices*k+a);
-                if(*sum==*fsum){
-                    *sc=*sc+1;
-                    for(i=0;i<numVertices-1;i++)
-                        *(fpath+(*sc)*(numVertices-1)+i)=*(path+i);   //Updating final path direction.
-                }
-                else if(*sum<*fsum){
-                    *fsum=*sum; //Updating covered path distance.
-                    *sc=0;
-                    for(i=0;i<numVertices-1;i++)
-                        *(fpath+i)=*(path+i);   //Updating final path direction.
-                }
-                *sum=*sum-*(A+numVertices*k+a);
-            }
-
-            /*Removing the previous node and undoing all its effect*/
-            for(i=flag;i<numVertices;i++)
-                *(C+numVertices*i+k)=0;
-            *sum=*sum-*(A+numVertices*b+k);   //Substructing last added path distance.
+    for (int i = 0; i < numVerticesInPath; i++) {
+	for (int j = 0; j < numVerticesInPath; j++) {
+	    if (i == j) continue;
+	    verticesPermutations
+	}
+    }
+ 
+    // store minimum weight Hamiltonian Cycle.
+    int minPath = MAX_WEIGHT;
+    do {
+ 
+        // store current Path weight(cost)
+        int currentPathWeight = 0;
+ 
+        // compute current path weight
+        int iteratorValue = fromValue;
+        for (int i = 0; i < (numVerticesInPath-1); i++) {
+	    int pathWeight = graph[getVertexId(iteratorValue)][verticesToCheck[i]];
+            currentPathWeight = (pathWeight == 0) ? MAX_WEIGHT : currentPathWeight + pathWeight;
+            iteratorValue = verticesToCheck[i];
         }
+ 
+        // update minimum
+        minPath = min(minPath, currentPathWeight);
+ 
+    } while (
+        next_permutation(vertex.begin(), vertex.end()));
+
+    destroyTwoDimenArrayOnHeapUsingFree(verticesPermutations, numVertices,numVertices);
+ 
+    return minPath == MAX_WEIGHT ? -1 : minPath;
 }
