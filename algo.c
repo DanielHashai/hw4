@@ -48,6 +48,8 @@ void doDijkstra() {
     int *minPathWeights = dijkstra(graph, from);
     printSolution(minPathWeights);
 
+     printf("Dijsktra shortest path: %d\n", minPathWeights[getVertexId(to)]);
+
     destroyTwoDimenArrayOnHeapUsingFree(graph, numVertices,numVertices);
     free(minPathWeights);
 
