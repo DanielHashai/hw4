@@ -37,7 +37,6 @@ void doDijkstra() {
     }
 
     for (int i = 0; i < numVertices; i++) {
-	Vertex *from = vertices[i];
 	if (DEBUG_EN) printf("%s %d [doDijkstra] graph[%d/%d]: ", __FILE__, __LINE__, i, vertices[i]->value);
 	for (int j = 0; j < numVertices; j++) {
 	    if (DEBUG_EN) printf("%d ", graph[i][j]);
@@ -128,18 +127,53 @@ int* dijkstra(int **G,int startnode)
     return distance;
 }
 
-// A utility function to find the vertex with minimum distance value, from
-// the set of vertices not yet included in shortest path tree
-int minDistance(int dist[], bool sptSet[])
-{
-    // Initialize min value
-    int min = MAX_WEIGHT, min_index;
+//
+//==============================================================================
+//
 
-    for (int v = 0; v < numVertices; v++)
-        if (sptSet[v] == false && dist[v] <= min)
-            min = dist[v], min_index = v;
+char doTSP() {
+    return '0';
+}
 
-    if (DEBUG_EN) printf("%s %d [minDistance] done\n", __FILE__, __LINE__);
+void TSP(int* C, int* A, int* path, int* fpath, int *sum, int *fsum, int flag, int n, int b, int a, int *sc){
+    int i,k;
+    flag++;
+    for(k=0;k<n;k++)
+        if(*(C+n*flag+k)==0){  //Checking if any node of (flag+1)-th row is not already reached.
+            *(C+n*flag+k)=k+1;   //Placing the new node in that Vertex.
+            *sum=*sum+*(A+n*b+k);   //Updating total covered path distance.
+            *(path+flag-1)=k;   //Adding the vertex to salesman's path.
 
-    return min_index;
+            /*Updating the Board w.r.t. the newly covered vertex*/
+            if(flag<n){
+                for(i=flag+1;i<n;i++)
+                    *(C+i*n+k)=k+1;
+            }
+
+            /*Recursively call TSP function*/
+            if(flag<n-1)
+                TSP(C,A,path,fpath,sum,fsum,flag,n,k,a,sc);
+
+            /*Storing new solution to 'fpath'-array if found.*/
+            if(flag==n-1){
+                *sum=*sum+*(A+n*k+a);
+                if(*sum==*fsum){
+                    *sc=*sc+1;
+                    for(i=0;i<n-1;i++)
+                        *(fpath+(*sc)*(n-1)+i)=*(path+i);   //Updating final path direction.
+                }
+                else if(*sum<*fsum){
+                    *fsum=*sum; //Updating covered path distance.
+                    *sc=0;
+                    for(i=0;i<n-1;i++)
+                        *(fpath+i)=*(path+i);   //Updating final path direction.
+                }
+                *sum=*sum-*(A+n*k+a);
+            }
+
+            /*Removing the previous node and undoing all its effect*/
+            for(i=flag;i<n;i++)
+                *(C+n*i+k)=0;
+            *sum=*sum-*(A+n*b+k);   //Substructing last added path distance.
+        }
 }
