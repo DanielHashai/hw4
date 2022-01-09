@@ -37,7 +37,7 @@ char doD() {
 }
 
 char doT() {
-    return getCharOnly();
+    return doTSP();
 }
 
 int main() {

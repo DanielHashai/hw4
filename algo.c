@@ -132,7 +132,11 @@ int* dijkstra(int **G,int startnode)
 //
 
 char doTSP() {
-    return '0';
+
+    int tspShortestPath = -1;
+    
+    printf("TSP shortest path: %d\n", tspShortestPath);
+    return getCharOnly();
 }
 
 void TSP(int* C, int* A, int* path, int* fpath, int *sum, int *fsum, int flag, int n, int b, int a, int *sc){
