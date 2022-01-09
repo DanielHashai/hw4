@@ -57,7 +57,7 @@ void doDijkstra() {
     int *minPathWeights = dijkstra(graph, from);
     printSolution(minPathWeights);
 
-     printf("Dijsktra shortest path: %d\n", minPathWeights[getVertexId(to)]);
+     printf("Dijsktra shortest path: %0d\n", minPathWeights[getVertexId(to)]);
 
     destroyTwoDimenArrayOnHeapUsingFree(graph, numVertices,numVertices);
     free(minPathWeights);
@@ -159,7 +159,7 @@ char doTSP() {
     int **graph = getGraph();
     int tspShortestPath = travelingSalesmanProblem(graph, vertexIsInPath, numVerticesInPath);
 
-    printf("TSP shortest path: %d\n", tspShortestPath);
+    printf("TSP shortest path: %0d\n", tspShortestPath);
 
     free(vertexIsInPath);
     destroyTwoDimenArrayOnHeapUsingFree(graph, numVertices,numVertices);
