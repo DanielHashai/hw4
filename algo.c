@@ -292,24 +292,17 @@ int travelingSalesmanProblem(int **graph, int *verticesInPath, int numVerticesIn
 	}
 	if (DEBUG_EN) printf("%s %d [TSP] permutation %d\n=============\n", __FILE__, __LINE__, i);
 	print1DArray(currentVerticesPermutation, numVertices);
-   // if (DEBUG_EN) printf("%s %d [TSP] here\n", __FILE__, __LINE__);
     	for (int j = 1; j < numVertices; j++) {
 
-   // if (DEBUG_EN) printf("%s %d [TSP] here j %d\n", __FILE__, __LINE__,j);
 	print1DArray(currentVerticesPermutation, numVertices);
 	    int toValue = currentVerticesPermutation[j];
 	    int toGraphId = getVertexId(toValue);
- //   if (DEBUG_EN) printf("%s %d [TSP] here j %d\n", __FILE__, __LINE__,j);
     	    int pathWeight = graph[fromGraphId][toGraphId];
 
 	    vertexIsInPath[fromGraphId] = true;
-//    if (DEBUG_EN) printf("%s %d [TSP] here\n", __FILE__, __LINE__);
-
-	   //printf("%s %d [TSP] from(%d) to(%d) pathWeight(%d) j(%d) currentPathWeight(%d)\n", __FILE__, __LINE__, fromValue, toValue, pathWeight, j, currentPathWeight);
 
 	    if (pathWeight == 0) {
 		currentPathWeight = 0;
-//    if (DEBUG_EN) printf("%s %d [TSP] here break;\n", __FILE__, __LINE__);
 		break;
 	    }
 	   //if (DEBUG_EN) printf("%s %d [TSP] from(%d) to(%d) pathWeight(%d) j(%d)\n", __FILE__, __LINE__, fromValue, toValue, pathWeight, j);
