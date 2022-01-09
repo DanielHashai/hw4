@@ -179,20 +179,21 @@ static int permutationRowId = 0;
 void updateOut(int **out, int arr[], int size)
 {
     int rowId = permutationRowId++;
-    if (DEBUG_EN) printf("%s %d [updateOut] row %d size(%d):\t", __FILE__, __LINE__, rowId, size);
-    print1DArray(arr, size);
+    if (DEBUG_EN && TSP_DEBUG_EN) printf("%s %d [updateOut] row(%d) size(%d)\n", __FILE__, __LINE__, rowId, size);
+    if (DEBUG_EN && TSP_DEBUG_EN) print1DArray(arr, size);
     for(int i=0; i<size; i++)
     {
 	out[rowId][i] = arr[i];
     }
-    if (DEBUG_EN) printf("\n");
+    if (DEBUG_EN && TSP_DEBUG_EN) printf("\n");
 }
 
 void print1DArray(int arr[], int size)
 {
     if (DEBUG_EN) printf("%s %d [print1DArray] size(%d) arr: ", __FILE__,__LINE__, size);
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < size; i++) {
 	if (DEBUG_EN) printf("%d ", arr[i]);
+    }
     if (DEBUG_EN) printf("\n");
 }
 
@@ -205,7 +206,6 @@ void print2DArray(int **arr, int row, int col)
 	}
 	if (DEBUG_EN) printf("\n");
     }
-    if (DEBUG_EN) printf("\n");
 }
 
 //permutation function
@@ -229,50 +229,96 @@ void permutation(int **out, int *arr, int start, int end)
     }
 }
 
+unsigned factorial(unsigned n)
+{
+    int fact = 1;
+     for(int i=1;i<=n;i++){    
+	fact=fact*i;    
+     }    
+    if (DEBUG_EN) printf("%s %d [factorial] n(%d) fact(%d)\n", __FILE__, __LINE__, n, fact);
+    return fact;
+}
+
 int** getPermutations(int *elements, int size) {
-    print1DArray(elements, size);
-    int numOfPermutations = (int)pow(2, size);
+    if (DEBUG_EN && EXTRA_DEBUG_EN) print1DArray(elements, size);
+    int numOfPermutations = factorial(size);
     int **ret = allocateTwoDimenArrayOnHeapUsingMalloc(numOfPermutations, size);
     permutation(ret, elements, 0, size-1);
     return ret;
 }
 
+bool vertexInList(int vertexValue, bool* vertexValid) {
+    int vertexId = getVertexId(vertexValue);
+    return vertexValid[vertexId];
+}
+
+
 // implementation of traveling Salesman Problem
 int travelingSalesmanProblem(int **graph, int *verticesInPath, int numVerticesInPath)
 {
 
-    int numOfPermutations = (int)pow(2, numVerticesInPath);
-    int **verticesPermutations = getPermutations(verticesInPath, numVerticesInPath);
+    int numOfPermutations = factorial(numVertices);;
+    int *verticesValueList = getVerticesValueList();
+    int **verticesPermutations = getPermutations(verticesValueList, numVertices);
     int minPath = MAX_WEIGHT;
 
     if (DEBUG_EN) printf("%s %d [TSP] start numOfPermutations(%d) minPath(%d) permutationRowId(%d)\n", __FILE__, __LINE__, numOfPermutations, minPath, permutationRowId);
-    print2DArray(verticesPermutations, numOfPermutations, numVerticesInPath);
+    print2DArray(verticesPermutations, numOfPermutations, numVertices);
 
     int numValidRows = (permutationRowId < numOfPermutations) ? permutationRowId : numOfPermutations;
+    // store current Path weight(cost)
+    int currentPathWeight = 0;
     for (int i = 0; i < numValidRows; i++) {
 	int *currentVerticesPermutation = verticesPermutations[i];
 
-    	// store current Path weight(cost)
-    	int currentPathWeight = 0;
- 
     	// compute current path weight
 	int fromValue = currentVerticesPermutation[0];
 	int fromGraphId = getVertexId(fromValue);
-    	for (int i = 1; i < numVerticesInPath; i++) {
-	    int toValue = currentVerticesPermutation[i];
+	bool* vertexIsInPath = (bool *)malloc(sizeof(bool)*numVertices);
+    	for (int k = 0; k < numVertices; k++) {
+	    vertexIsInPath[k] = false;
+	}
+    	for (int j = 1; j < numVertices; j++) {
+
+	    int toValue = currentVerticesPermutation[j];
     	    int pathWeight = graph[fromValue][toValue];
-    	    currentPathWeight = (pathWeight == 0) ? MAX_WEIGHT : currentPathWeight + pathWeight;
-    	    fromValue = currentVerticesPermutation[i];
-	    fromGraphId = getVertexId(fromValue);
+
+	    vertexIsInPath[fromGraphId] = true;
+
+//	   printf("%s %d [TSP] from(%d) to(%d) pathWeight(%d) j(%d) currentPathWeight(%d)\n", __FILE__, __LINE__, fromValue, toValue, pathWeight, j, currentPathWeight);
+
+	    if (pathWeight == 0) {
+		currentPathWeight = 0;
+		break;
+	    }
+	   //if (DEBUG_EN) printf("%s %d [TSP] from(%d) to(%d) pathWeight(%d) j(%d)\n", __FILE__, __LINE__, fromValue, toValue, pathWeight, j);
+
+	    int toGraphId = getVertexId(toValue);
+	    vertexIsInPath[toGraphId] = true;
+
+    	    currentPathWeight += pathWeight;
+    	    fromValue = currentVerticesPermutation[j];
+	    fromGraphId = getVertexId(toValue);
     	}
+
+	bool pathValid = true;
+    	for (int j = 0; j < numVerticesInPath; j++) {
+	    if (vertexInList(verticesInPath[j], vertexIsInPath)) continue;
+	    pathValid = false;
+	    break;
+	}
+
+	bool updateMin = (currentPathWeight != 0) && (currentPathWeight < minPath)  && pathValid;
  
+	if (DEBUG_EN) printf("%s %d [TSP] from(%d) to(%d) currentPathWeight(%d) i(%d) updateMin(%d) pathValid(%d) minPath(%d)\n", __FILE__, __LINE__, currentVerticesPermutation[0], currentVerticesPermutation[numVerticesInPath-1], currentPathWeight, i, updateMin, pathValid, minPath);
+
     	// update minimum
-    	minPath = (minPath < currentPathWeight) ? minPath : currentPathWeight;
- 
+    	minPath = updateMin ? currentPathWeight : minPath;
 
     }
 
     destroyTwoDimenArrayOnHeapUsingFree(verticesPermutations, numVertices,numVertices);
+    free(verticesValueList);
     permutationRowId = 0; // initialize for next call
 
     return minPath == MAX_WEIGHT ? -1 : minPath;

@@ -409,3 +409,11 @@ int getWeight(int from, int to) {
 
     return ret;
 }
+
+int* getVerticesValueList() {
+    int* ret = (int*)malloc(sizeof(int)*numVertices);
+    for (int i = 0; i < numVertices; i++) {
+	ret[i] = vertices[i]->value;
+    }
+    return ret;
+}

@@ -18,3 +18,4 @@ int** getPermutations(int *elements, int size);
 void permutation(int ** out, int *arr, int start, int end);
 void print2DArray(int **arr, int row, int col);
 void print1DArray(int arr[], int size);
+bool vertexInList(int vertexValue, bool* vertexValid);
